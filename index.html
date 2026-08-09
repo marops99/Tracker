@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Tracker — Cibo & Abitudini</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0d2b1f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tracker">
+<link rel="apple-touch-icon" href="icon-192.png">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Archivo:wght@400;600;700&display=swap');
+
+:root{
+–pitch: #0d2b1f;
+–line: #d9e8dd;
+–chalk: #f3f6f0;
+–lime: #c9f31d;
+–amber: #ff8a3d;
+–pink: #ff6b8a;
+–blue: #4f9cd6;
+–ink: #0c1410;
+–muted: #6f8378;
+}
+*{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color: transparent;}
+html{ -webkit-text-size-adjust: 100%; }
+body{
+font-family:‘Archivo’, sans-serif;
+background: var(–chalk);
+color: var(–ink);
+padding-bottom: 100px;
+}
+
+header{
+background: var(–pitch);
+color: var(–chalk);
+padding: 24px 16px 20px;
+position: sticky;
+top:0;
+z-index: 10;
+}
+.htop{
+display:flex;
+align-items:center;
+justify-content:space-between;
+}
+.eyebrow{
+font-family:‘Space Grotesk’, sans-serif;
+text-transform:uppercase;
+letter-spacing:.1em;
+font-size:11px;
+color: var(–lime);
+font-weight:700;
+}
+.datepill{
+font-family:‘Space Grotesk’, sans-serif;
+font-size:12px;
+font-weight:700;
+background: rgba(255,255,255,.1);
+padding:6px 12px;
+border-radius:20px;
+border:none;
+color:white;
+}
+
+.tabs{
+display:flex;
+gap:4px;
+margin-top:16px;
+background: rgba(255,255,255,.08);
+border-radius:14px;
+padding:4px;
+overflow-x:auto;
+}
+.tabs button{
+flex:1 0 auto;
+border:none;
+background:transparent;
+color:#b9ccbf;
+padding:10px 6px;
+font-family:‘Space Grotesk’, sans-serif;
+font-weight:700;
+font-size:11.5px;
+border-radius:10px;
+white-space:nowrap;
+}
+.tabs button.active{
+background: var(–lime);
+color: var(–pitch);
+}
+
+main{ padding: 16px 14px 0; max-width: 640px; margin:0 auto;}
+.panel{ display:none; }
+.panel.active{ display:block; }
+
+.card{
+background:white;
+border-radius:16px;
+border:1px solid var(–line);
+margin-bottom:14px;
+overflow:hidden;
+}
+.card-head{
+padding:14px 16px 10px;
+font-family:‘Space Grotesk’, sans-serif;
+font-weight:700;
+font-size:15px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+}
+.card-body{ padding: 0 16px 16px; }
+
+/* Summary ring cards */
+.summary-grid{
+display:grid;
+grid-template-columns: 1fr 1fr;
+gap:10px;
+margin-bottom:14px;
+}
+.stat-card{
+background:white;
+border-radius:14px;
+border:1px solid var(–line);
+padding:14px;
+}
+.stat-label{
+font-size:10.5px;
+text-transform:uppercase;
+letter-spacing:.06em;
+color:var(–muted);
+font-weight:700;
+}
+.stat-value{
+font-family:‘Space Grotesk’, sans-serif;
+font-size:22px;
+font-weight:700;
+margin-top:4px;
+}
+.stat-sub{ font-size:11px; color:var(–muted); margin-top:2px; }
+.bar-track{
+height:6px;
+background:#eef2ec;
+border-radius:10px;
+margin-top:8px;
+overflow:hidden;
+}
+.bar-fill{
+height:100%;
+border-radius:10px;
+background: var(–lime);
+}
+.bar-fill.over{ background: var(–pink); }
+
+/* Forms */
+label{
+display:block;
+font-size:12px;
+font-weight:700;
+color:var(–muted);
+margin: 10px 0 4px;
+}
+input, select, textarea{
+width:100%;
+border:1px solid var(–line);
+border-radius:10px;
+padding:10px 12px;
+font-family:‘Archivo’, sans-serif;
+font-size:15px;
+background:#fafcf8;
+color:var(–ink);
+}
+input:focus, select:focus, textarea:focus{
+outline:none;
+border-color: var(–lime);
+background:white;
+}
+.row2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+.row3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+
+.btn{
+display:block;
+width:100%;
+border:none;
+background: var(–pitch);
+color: var(–lime);
+font-family:‘Space Grotesk’, sans-serif;
+font-weight:700;
+font-size:14px;
+padding:13px;
+border-radius:12px;
+margin-top:14px;
+}
+.btn:active{ opacity:.85; }
+.btn.secondary{
+background:#eef2ec;
+color: var(–ink);
+}
+.btn.small{
+width:auto;
+padding:8px 14px;
+font-size:12px;
+margin-top:0;
+}
+
+/* Food list */
+.food-item{
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:12px 16px;
+border-bottom:1px solid #f1f4ef;
+}
+.food-item:last-child{ border-bottom:none; }
+.food-name{ font-weight:700; font-size:14.5px; }
+.food-meta{ font-size:11.5px; color:var(–muted); margin-top:2px; }
+.food-actions{ display:flex; gap:6px; }
+.icon-btn{
+width:32px; height:32px;
+border-radius:50%;
+border:1px solid var(–line);
+background:white;
+display:flex; align-items:center; justify-content:center;
+font-size:15px;
+}
+
+.empty-state{
+padding:30px 16px;
+text-align:center;
+color:var(–muted);
+font-size:13px;
+line-height:1.6;
+}
+
+/* Diary entries */
+.diary-entry{
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:12px 16px;
+border-bottom:1px solid #f1f4ef;
+}
+.diary-entry:last-child{ border-bottom:none; }
+.diary-macros{ display:flex; gap:6px; margin-top:4px; flex-wrap:wrap; }
+.pill{
+font-size:10.5px;
+font-weight:700;
+padding:2px 8px;
+border-radius:20px;
+font-family:‘Space Grotesk’, sans-serif;
+}
+.pill-kcal{ background:#fff0e4; color:var(–amber); }
+.pill-prot{ background:#eef8e6; color:#5a8f2e; }
+
+/* Habits */
+.habit-row{
+display:flex;
+align-items:center;
+gap:12px;
+padding:12px 16px;
+border-bottom:1px solid #f1f4ef;
+}
+.habit-row:last-child{ border-bottom:none; }
+.habit-check{
+width:28px; height:28px;
+border-radius:8px;
+border:2px solid var(–line);
+flex-shrink:0;
+display:flex; align-items:center; justify-content:center;
+font-size:15px;
+font-weight:700;
+}
+.habit-check.done{
+background: var(–lime);
+border-color: var(–lime);
+color: var(–pitch);
+}
+.habit-name{ flex:1; font-weight:700; font-size:14px; }
+.habit-streak{ font-size:11px; color:var(–muted); font-family:‘Space Grotesk’, sans-serif; font-weight:700; }
+
+.heatmap{
+display:grid;
+grid-template-columns: repeat(14, 1fr);
+gap:4px;
+padding: 4px 16px 16px;
+}
+.heat-cell{
+aspect-ratio:1;
+border-radius:4px;
+background:#eef2ec;
+}
+.heat-cell.h1{ background:#e3f5c4; }
+.heat-cell.h2{ background:#c9f31d; }
+
+/* Feelings */
+.feeling-entry{
+padding:14px 16px;
+border-bottom:1px solid #f1f4ef;
+}
+.feeling-entry:last-child{ border-bottom:none; }
+.feeling-date{
+font-family:‘Space Grotesk’, sans-serif;
+font-weight:700;
+font-size:12px;
+color:var(–muted);
+}
+.feeling-scores{ display:flex; gap:14px; margin:6px 0; }
+.feeling-score{ text-align:center; }
+.feeling-score .n{ font-family:‘Space Grotesk’, sans-serif; font-weight:700; font-size:16px; }
+.feeling-score .l{ font-size:9px; color:var(–muted); text-transform:uppercase; }
+.feeling-note{ font-size:13px; color:#3d4a41; margin-top:4px; line-height:1.5; }
+
+.slider-group{ margin: 12px 0; }
+.slider-label{ display:flex; justify-content:space-between; font-size:12px; font-weight:700; color:var(–muted); margin-bottom:4px; }
+.slider-label span.val{ color:var(–ink); font-family:‘Space Grotesk’, sans-serif; }
+input[type=range]{
+-webkit-appearance:none;
+height:6px;
+border-radius:10px;
+background:#eef2ec;
+padding:0;
+}
+input[type=range]::-webkit-slider-thumb{
+-webkit-appearance:none;
+width:22px; height:22px;
+border-radius:50%;
+background: var(–pitch);
+border:3px solid var(–lime);
+}
+
+.fab-row{
+position:sticky;
+bottom:14px;
+display:flex;
+justify-content:center;
+margin-top:16px;
+z-index:5;
+}
+
+.modal-overlay{
+display:none;
+position:fixed; inset:0;
+background:rgba(13,43,31,.5);
+z-index:50;
+align-items:flex-end;
+}
+.modal-overlay.active{ display:flex; }
+.modal{
+background:white;
+width:100%;
+border-radius:20px 20px 0 0;
+padding:20px 18px 26px;
+max-height:85vh;
+overflow-y:auto;
+}
+.modal-title{
+font-family:‘Space Grotesk’, sans-serif;
+font-weight:700;
+font-size:18px;
+margin-bottom:4px;
+}
+.modal-close{
+position:absolute;
+right:20px;
+background:#eef2ec;
+border:none;
+width:30px; height:30px;
+border-radius:50%;
+font-size:16px;
+}
+
+.empty-icon{ font-size:32px; margin-bottom:8px; }
+
+.toast{
+position:fixed;
+bottom:20px; left:50%;
+transform:translateX(-50%);
+background: var(–pitch);
+color: var(–lime);
+padding:10px 20px;
+border-radius:30px;
+font-size:13px;
+font-weight:700;
+font-family:‘Space Grotesk’, sans-serif;
+z-index:100;
+opacity:0;
+transition:opacity .3s;
+pointer-events:none;
+}
+.toast.show{ opacity:1; }
+
+.swipe-hint{ font-size:11px; color:var(–muted); text-align:center; padding:8px 0 0; }
+
+/* Charts */
+.period-picker{
+display:flex;
+gap:6px;
+padding: 10px 16px 4px;
+}
+.period-picker button{
+flex:1;
+border:1px solid var(–line);
+background:#fafcf8;
+padding:8px 6px;
+font-family:‘Space Grotesk’, sans-serif;
+font-weight:700;
+font-size:12px;
+border-radius:8px;
+color:var(–muted);
+}
+.period-picker button.active{
+background: var(–pitch);
+color: var(–lime);
+border-color: var(–pitch);
+}
+.chart-wrap{
+padding: 12px 16px 16px;
+position:relative;
+height:200px;
+}
+.chart-legend-note{
+padding: 0 16px 14px;
+font-size:11.5px;
+color:var(–muted);
+line-height:1.5;
+}
+</style>
+
+</head>
+<body>
+
+<header>
+  <div class="htop">
+    <div class="eyebrow">Pasquale · Tracker</div>
+    <button class="datepill" id="dateDisplay" onclick="document.getElementById('dateInput').showPicker()">Oggi</button>
+    <input type="date" id="dateInput" style="position:absolute; opacity:0; pointer-events:none;">
+  </div>
+  <div class="tabs">
+    <button class="active" onclick="showTab('diary')">🍽 Diario</button>
+    <button onclick="showTab('foods')">📦 Alimenti</button>
+    <button onclick="showTab('habits')">✅ Abitudini</button>
+    <button onclick="showTab('feelings')">💭 Sensazioni</button>
+  </div>
+</header>
+
+<main>
+
+<!-- ============ DIARY TAB ============ -->
+
+<div class="panel active" id="tab-diary">
+
+  <div class="summary-grid">
+    <div class="stat-card">
+      <div class="stat-label">Calorie oggi</div>
+      <div class="stat-value" id="kcalToday">0</div>
+      <div class="stat-sub" id="kcalTarget">target 2100-2300</div>
+      <div class="bar-track"><div class="bar-fill" id="kcalBar" style="width:0%"></div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Proteine oggi</div>
+      <div class="stat-value" id="protToday">0g</div>
+      <div class="stat-sub" id="protTarget">target 150-170g</div>
+      <div class="bar-track"><div class="bar-fill" id="protBar" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">Andamento</div>
+    <div class="period-picker" id="diaryPeriodPicker">
+      <button class="active" onclick="setDiaryPeriod(7)">7 giorni</button>
+      <button onclick="setDiaryPeriod(14)">14 giorni</button>
+      <button onclick="setDiaryPeriod(30)">30 giorni</button>
+    </div>
+    <div class="chart-wrap"><canvas id="diaryChart"></canvas></div>
+    <div class="chart-legend-note">Linea arancione = calorie, linea verde = proteine. Tratteggio = target.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">Pasti di oggi</div>
+    <div id="diaryList"></div>
+  </div>
+
+<button class="btn" onclick="openDiaryModal()">+ Aggiungi alimento mangiato</button>
+
+</div>
+
+<!-- ============ FOODS TAB ============ -->
+
+<div class="panel" id="tab-foods">
+
+  <div class="card">
+    <div class="card-head">Il tuo database alimenti</div>
+    <div id="foodsList"></div>
+  </div>
+
+<button class="btn" onclick="openFoodModal()">+ Aggiungi nuovo alimento</button>
+
+</div>
+
+<!-- ============ HABITS TAB ============ -->
+
+<div class="panel" id="tab-habits">
+
+  <div class="card">
+    <div class="card-head">
+      <span>Abitudini di oggi</span>
+      <button class="icon-btn" onclick="openHabitModal()">+</button>
+    </div>
+    <div id="habitsList"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">Andamento completamento</div>
+    <div class="period-picker" id="habitsPeriodPicker">
+      <button class="active" onclick="setHabitsPeriod(7)">7 giorni</button>
+      <button onclick="setHabitsPeriod(14)">14 giorni</button>
+      <button onclick="setHabitsPeriod(30)">30 giorni</button>
+    </div>
+    <div class="chart-wrap"><canvas id="habitsChart"></canvas></div>
+    <div class="chart-legend-note">% di abitudini completate ogni giorno.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">Ultimi 14 giorni</div>
+    <div id="heatmapContainer"></div>
+    <div class="swipe-hint">Ogni colonna = un giorno, più chiaro = meno abitudini completate</div>
+  </div>
+
+</div>
+
+<!-- ============ FEELINGS TAB ============ -->
+
+<div class="panel" id="tab-feelings">
+
+<button class="btn" onclick="openFeelingModal()">+ Registra come ti senti oggi</button>
+
+  <div class="card" style="margin-top:14px;">
+    <div class="card-head">Storico</div>
+    <div id="feelingsList"></div>
+  </div>
+
+</div>
+
+</main>
+
+<!-- ============ MODALS ============ -->
+
+<div class="modal-overlay" id="foodModalOverlay">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('foodModalOverlay')">✕</button>
+    <div class="modal-title">Nuovo alimento</div>
+    <div style="font-size:12px; color:var(--muted); margin-bottom:6px;">Leggi i valori dalla confezione, per 100g</div>
+
+```
+<label>Nome</label>
+<input type="text" id="f_name" placeholder="es. Bresaola di tacchino">
+
+<div class="row2">
+  <div>
+    <label>Prezzo confezione (€)</label>
+    <input type="number" id="f_price" placeholder="2.50" step="0.01" inputmode="decimal">
+  </div>
+  <div>
+    <label>Peso confezione (g)</label>
+    <input type="number" id="f_pkgweight" placeholder="90" inputmode="numeric">
+  </div>
+</div>
+
+<label>Valori nutrizionali per 100g</label>
+<div class="row2">
+  <div>
+    <input type="number" id="f_kcal" placeholder="Kcal" inputmode="decimal">
+  </div>
+  <div>
+    <input type="number" id="f_prot" placeholder="Proteine g" inputmode="decimal">
+  </div>
+</div>
+<div class="row2" style="margin-top:8px;">
+  <div>
+    <input type="number" id="f_carb" placeholder="Carboidrati g" inputmode="decimal">
+  </div>
+  <div>
+    <input type="number" id="f_fat" placeholder="Grassi g" inputmode="decimal">
+  </div>
+</div>
+
+<button class="btn" onclick="saveFood()">Salva alimento</button>
+```
+
+  </div>
+</div>
+
+<div class="modal-overlay" id="diaryModalOverlay">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('diaryModalOverlay')">✕</button>
+    <div class="modal-title">Aggiungi al diario</div>
+
+```
+<label>Alimento</label>
+<select id="d_food"></select>
+
+<label>Quantità mangiata (g)</label>
+<input type="number" id="d_grams" placeholder="100" inputmode="numeric">
+
+<div id="d_preview" style="margin-top:12px; padding:12px; background:#f7f9f4; border-radius:10px; font-size:13px; display:none;"></div>
+
+<button class="btn" onclick="saveDiaryEntry()">Aggiungi al diario</button>
+```
+
+  </div>
+</div>
+
+<div class="modal-overlay" id="habitModalOverlay">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('habitModalOverlay')">✕</button>
+    <div class="modal-title">Nuova abitudine</div>
+
+```
+<label>Nome abitudine</label>
+<input type="text" id="h_name" placeholder="es. Allenamento fatto, 8 ore di sonno...">
+
+<button class="btn" onclick="saveHabit()">Aggiungi</button>
+```
+
+  </div>
+</div>
+
+<div class="modal-overlay" id="feelingModalOverlay">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('feelingModalOverlay')">✕</button>
+    <div class="modal-title">Come ti senti oggi</div>
+
+```
+<div class="slider-group">
+  <div class="slider-label">Energia <span class="val" id="e_energia_val">5</span></div>
+  <input type="range" min="1" max="10" value="5" id="e_energia" oninput="document.getElementById('e_energia_val').textContent=this.value">
+</div>
+<div class="slider-group">
+  <div class="slider-label">Umore <span class="val" id="e_umore_val">5</span></div>
+  <input type="range" min="1" max="10" value="5" id="e_umore" oninput="document.getElementById('e_umore_val').textContent=this.value">
+</div>
+<div class="slider-group">
+  <div class="slider-label">Indolenzimento muscolare <span class="val" id="e_dolori_val">5</span></div>
+  <input type="range" min="1" max="10" value="5" id="e_dolori" oninput="document.getElementById('e_dolori_val').textContent=this.value">
+</div>
+<div class="slider-group">
+  <div class="slider-label">Qualità del sonno <span class="val" id="e_sonno_val">5</span></div>
+  <input type="range" min="1" max="10" value="5" id="e_sonno" oninput="document.getElementById('e_sonno_val').textContent=this.value">
+</div>
+
+<label>Note libere (opzionale)</label>
+<textarea id="e_note" rows="3" placeholder="Come ti senti, cosa hai notato..."></textarea>
+
+<button class="btn" onclick="saveFeeling()">Salva</button>
+```
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============ STATE & STORAGE HELPERS ============
+let currentDate = new Date().toISOString().split('T')[0];
+let foods = {};       // id -> {name, price, pkgWeight, kcal, prot, carb, fat}
+let diary = {};        // date -> [{foodId, grams}]
+let habits = [];       // [{id, name}]
+let habitLogs = {};     // date -> {habitId: true}
+let feelings = {};      // date -> {energia, umore, dolori, sonno, note}
+
+async function loadAll(){
+  try{
+    const f = localStorage.getItem('tracker_foods');
+    foods = f ? JSON.parse(f) : {};
+  }catch(e){ foods = {}; }
+  try{
+    const d = localStorage.getItem('tracker_diary');
+    diary = d ? JSON.parse(d) : {};
+  }catch(e){ diary = {}; }
+  try{
+    const h = localStorage.getItem('tracker_habits');
+    habits = h ? JSON.parse(h) : [];
+  }catch(e){ habits = []; }
+  try{
+    const hl = localStorage.getItem('tracker_habitLogs');
+    habitLogs = hl ? JSON.parse(hl) : {};
+  }catch(e){ habitLogs = {}; }
+  try{
+    const fe = localStorage.getItem('tracker_feelings');
+    feelings = fe ? JSON.parse(fe) : {};
+  }catch(e){ feelings = {}; }
+
+  renderAll();
+}
+
+async function persist(key, val){
+  try{
+    localStorage.setItem('tracker_'+key, JSON.stringify(val));
+  }catch(e){
+    showToast('Errore salvataggio');
+  }
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 1800);
+}
+
+function uid(){ return 'id' + Date.now() + Math.floor(Math.random()*1000); }
+
+// ============ TABS ============
+function showTab(name){
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('tab-'+name).classList.add('active');
+  document.querySelectorAll('.tabs button').forEach(b=>b.classList.remove('active'));
+  const idx = ['diary','foods','habits','feelings'].indexOf(name);
+  document.querySelectorAll('.tabs button')[idx].classList.add('active');
+  renderAll();
+}
+
+function closeModal(id){
+  document.getElementById(id).classList.remove('active');
+}
+
+// ============ DATE PICKER ============
+document.getElementById('dateInput').addEventListener('change', (e)=>{
+  currentDate = e.target.value;
+  updateDateDisplay();
+  renderAll();
+});
+
+function updateDateDisplay(){
+  const today = new Date().toISOString().split('T')[0];
+  const d = new Date(currentDate + 'T12:00:00');
+  const opts = {day:'numeric', month:'short'};
+  let label = d.toLocaleDateString('it-IT', opts);
+  if(currentDate === today) label = 'Oggi';
+  document.getElementById('dateDisplay').textContent = label;
+  document.getElementById('dateInput').value = currentDate;
+}
+
+// ============ FOODS ============
+function openFoodModal(){
+  document.getElementById('f_name').value='';
+  document.getElementById('f_price').value='';
+  document.getElementById('f_pkgweight').value='';
+  document.getElementById('f_kcal').value='';
+  document.getElementById('f_prot').value='';
+  document.getElementById('f_carb').value='';
+  document.getElementById('f_fat').value='';
+  document.getElementById('foodModalOverlay').classList.add('active');
+}
+
+async function saveFood(){
+  const name = document.getElementById('f_name').value.trim();
+  const price = parseFloat(document.getElementById('f_price').value)||0;
+  const pkgWeight = parseFloat(document.getElementById('f_pkgweight').value)||0;
+  const kcal = parseFloat(document.getElementById('f_kcal').value)||0;
+  const prot = parseFloat(document.getElementById('f_prot').value)||0;
+  const carb = parseFloat(document.getElementById('f_carb').value)||0;
+  const fat = parseFloat(document.getElementById('f_fat').value)||0;
+
+  if(!name){ showToast('Inserisci un nome'); return; }
+
+  const id = uid();
+  foods[id] = {name, price, pkgWeight, kcal, prot, carb, fat};
+  await persist('foods', foods);
+  closeModal('foodModalOverlay');
+  showToast('Alimento salvato');
+  renderAll();
+}
+
+async function deleteFood(id){
+  delete foods[id];
+  await persist('foods', foods);
+  renderAll();
+}
+
+function renderFoods(){
+  const list = document.getElementById('foodsList');
+  const ids = Object.keys(foods);
+  if(ids.length === 0){
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">📦</div>Nessun alimento ancora.<br>Aggiungi il primo leggendo i valori dalla confezione.</div>';
+    return;
+  }
+  list.innerHTML = ids.map(id=>{
+    const f = foods[id];
+    const pricePerKg = f.pkgWeight > 0 ? (f.price / f.pkgWeight * 1000).toFixed(2) : '—';
+    return `<div class="food-item">
+      <div>
+        <div class="food-name">${f.name}</div>
+        <div class="food-meta">${f.kcal} kcal · ${f.prot}g prot /100g ${f.price>0 ? '· €'+pricePerKg+'/kg' : ''}</div>
+      </div>
+      <div class="food-actions">
+        <button class="icon-btn" onclick="deleteFood('${id}')">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ============ DIARY ============
+function openDiaryModal(){
+  const sel = document.getElementById('d_food');
+  const ids = Object.keys(foods);
+  if(ids.length === 0){
+    showToast('Aggiungi prima un alimento nel database');
+    return;
+  }
+  sel.innerHTML = ids.map(id=>`<option value="${id}">${foods[id].name}</option>`).join('');
+  document.getElementById('d_grams').value = '';
+  document.getElementById('d_preview').style.display = 'none';
+  document.getElementById('diaryModalOverlay').classList.add('active');
+  updateDiaryPreview();
+}
+
+document.getElementById('d_food')?.addEventListener('change', updateDiaryPreview);
+document.getElementById('d_grams')?.addEventListener('input', updateDiaryPreview);
+
+function updateDiaryPreview(){
+  const foodId = document.getElementById('d_food').value;
+  const grams = parseFloat(document.getElementById('d_grams').value) || 0;
+  const preview = document.getElementById('d_preview');
+  if(!foodId || grams<=0){ preview.style.display='none'; return; }
+  const f = foods[foodId];
+  const factor = grams/100;
+  preview.style.display='block';
+  preview.innerHTML = `<b>${Math.round(f.kcal*factor)} kcal</b> · ${Math.round(f.prot*factor)}g proteine · ${Math.round(f.carb*factor)}g carb · ${Math.round(f.fat*factor)}g grassi`;
+}
+
+async function saveDiaryEntry(){
+  const foodId = document.getElementById('d_food').value;
+  const grams = parseFloat(document.getElementById('d_grams').value) || 0;
+  if(!foodId || grams<=0){ showToast('Inserisci i grammi'); return; }
+
+  if(!diary[currentDate]) diary[currentDate] = [];
+  diary[currentDate].push({foodId, grams, entryId: uid()});
+  await persist('diary', diary);
+  closeModal('diaryModalOverlay');
+  showToast('Aggiunto al diario');
+  renderAll();
+}
+
+async function deleteDiaryEntry(entryId){
+  if(!diary[currentDate]) return;
+  diary[currentDate] = diary[currentDate].filter(e=>e.entryId !== entryId);
+  await persist('diary', diary);
+  renderAll();
+}
+
+function renderDiary(){
+  const entries = diary[currentDate] || [];
+  const list = document.getElementById('diaryList');
+
+  let totalKcal = 0, totalProt = 0;
+
+  if(entries.length === 0){
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">🍽</div>Nessun pasto registrato oggi.</div>';
+  } else {
+    list.innerHTML = entries.map(e=>{
+      const f = foods[e.foodId];
+      if(!f) return '';
+      const factor = e.grams/100;
+      const kcal = Math.round(f.kcal*factor);
+      const prot = Math.round(f.prot*factor);
+      totalKcal += kcal;
+      totalProt += prot;
+      return `<div class="diary-entry">
+        <div>
+          <div class="food-name">${f.name} <span style="color:var(--muted); font-weight:400;">· ${e.grams}g</span></div>
+          <div class="diary-macros">
+            <span class="pill pill-kcal">${kcal} kcal</span>
+            <span class="pill pill-prot">${prot}g prot</span>
+          </div>
+        </div>
+        <button class="icon-btn" onclick="deleteDiaryEntry('${e.entryId}')">🗑</button>
+      </div>`;
+    }).join('');
+  }
+
+  // Recompute totals from all entries (in case some had missing food refs)
+  totalKcal = 0; totalProt = 0;
+  entries.forEach(e=>{
+    const f = foods[e.foodId];
+    if(!f) return;
+    const factor = e.grams/100;
+    totalKcal += f.kcal*factor;
+    totalProt += f.prot*factor;
+  });
+
+  document.getElementById('kcalToday').textContent = Math.round(totalKcal);
+  document.getElementById('protToday').textContent = Math.round(totalProt)+'g';
+
+  const kcalPct = Math.min(100, (totalKcal/2300)*100);
+  const protPct = Math.min(100, (totalProt/170)*100);
+  const kcalBar = document.getElementById('kcalBar');
+  const protBar = document.getElementById('protBar');
+  kcalBar.style.width = kcalPct+'%';
+  protBar.style.width = protPct+'%';
+  kcalBar.classList.toggle('over', totalKcal > 2300);
+}
+
+// ============ HABITS ============
+function openHabitModal(){
+  document.getElementById('h_name').value = '';
+  document.getElementById('habitModalOverlay').classList.add('active');
+}
+
+async function saveHabit(){
+  const name = document.getElementById('h_name').value.trim();
+  if(!name){ showToast('Inserisci un nome'); return; }
+  habits.push({id: uid(), name});
+  await persist('habits', habits);
+  closeModal('habitModalOverlay');
+  showToast('Abitudine aggiunta');
+  renderAll();
+}
+
+async function toggleHabit(habitId){
+  if(!habitLogs[currentDate]) habitLogs[currentDate] = {};
+  habitLogs[currentDate][habitId] = !habitLogs[currentDate][habitId];
+  await persist('habitLogs', habitLogs);
+  renderAll();
+}
+
+function calcStreak(habitId){
+  let streak = 0;
+  let d = new Date(currentDate + 'T12:00:00');
+  while(true){
+    const key = d.toISOString().split('T')[0];
+    if(habitLogs[key] && habitLogs[key][habitId]){
+      streak++;
+      d.setDate(d.getDate()-1);
+    } else break;
+  }
+  return streak;
+}
+
+function renderHabits(){
+  const list = document.getElementById('habitsList');
+  if(habits.length === 0){
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">✅</div>Nessuna abitudine ancora.<br>Aggiungi cosa vuoi tracciare ogni giorno.</div>';
+  } else {
+    const todayLog = habitLogs[currentDate] || {};
+    list.innerHTML = habits.map(h=>{
+      const done = !!todayLog[h.id];
+      const streak = calcStreak(h.id);
+      return `<div class="habit-row">
+        <div class="habit-check ${done?'done':''}" onclick="toggleHabit('${h.id}')">${done?'✓':''}</div>
+        <div class="habit-name">${h.name}</div>
+        <div class="habit-streak">${streak>0 ? '🔥 '+streak : ''}</div>
+      </div>`;
+    }).join('');
+  }
+  renderHeatmap();
+}
+
+function renderHeatmap(){
+  const container = document.getElementById('heatmapContainer');
+  if(habits.length === 0){ container.innerHTML=''; return; }
+
+  const cells = [];
+  let d = new Date(currentDate + 'T12:00:00');
+  const days = [];
+  for(let i=13;i>=0;i--){
+    const dd = new Date(d);
+    dd.setDate(d.getDate()-i);
+    days.push(dd.toISOString().split('T')[0]);
+  }
+  const html = days.map(key=>{
+    const log = habitLogs[key] || {};
+    const doneCount = habits.filter(h=>log[h.id]).length;
+    const pct = habits.length>0 ? doneCount/habits.length : 0;
+    let cls = '';
+    if(pct >= 1) cls = 'h2';
+    else if(pct > 0) cls = 'h1';
+    return `<div class="heat-cell ${cls}" title="${key}: ${doneCount}/${habits.length}"></div>`;
+  }).join('');
+  container.innerHTML = `<div class="heatmap">${html}</div>`;
+}
+
+// ============ FEELINGS ============
+function openFeelingModal(){
+  const existing = feelings[currentDate];
+  document.getElementById('e_energia').value = existing?.energia || 5;
+  document.getElementById('e_umore').value = existing?.umore || 5;
+  document.getElementById('e_dolori').value = existing?.dolori || 5;
+  document.getElementById('e_sonno').value = existing?.sonno || 5;
+  document.getElementById('e_note').value = existing?.note || '';
+  document.getElementById('e_energia_val').textContent = existing?.energia || 5;
+  document.getElementById('e_umore_val').textContent = existing?.umore || 5;
+  document.getElementById('e_dolori_val').textContent = existing?.dolori || 5;
+  document.getElementById('e_sonno_val').textContent = existing?.sonno || 5;
+  document.getElementById('feelingModalOverlay').classList.add('active');
+}
+
+async function saveFeeling(){
+  feelings[currentDate] = {
+    energia: parseInt(document.getElementById('e_energia').value),
+    umore: parseInt(document.getElementById('e_umore').value),
+    dolori: parseInt(document.getElementById('e_dolori').value),
+    sonno: parseInt(document.getElementById('e_sonno').value),
+    note: document.getElementById('e_note').value.trim()
+  };
+  await persist('feelings', feelings);
+  closeModal('feelingModalOverlay');
+  showToast('Salvato');
+  renderAll();
+}
+
+function renderFeelings(){
+  const list = document.getElementById('feelingsList');
+  const dates = Object.keys(feelings).sort().reverse();
+  if(dates.length === 0){
+    list.innerHTML = '<div class="empty-state"><div class="empty-icon">💭</div>Nessuna registrazione ancora.</div>';
+    return;
+  }
+  list.innerHTML = dates.slice(0,20).map(date=>{
+    const f = feelings[date];
+    const d = new Date(date+'T12:00:00');
+    const label = d.toLocaleDateString('it-IT', {day:'numeric', month:'short'});
+    return `<div class="feeling-entry">
+      <div class="feeling-date">${label}</div>
+      <div class="feeling-scores">
+        <div class="feeling-score"><div class="n">${f.energia}</div><div class="l">Energia</div></div>
+        <div class="feeling-score"><div class="n">${f.umore}</div><div class="l">Umore</div></div>
+        <div class="feeling-score"><div class="n">${f.dolori}</div><div class="l">Dolori</div></div>
+        <div class="feeling-score"><div class="n">${f.sonno}</div><div class="l">Sonno</div></div>
+      </div>
+      ${f.note ? `<div class="feeling-note">${f.note}</div>` : ''}
+    </div>`;
+  }).join('');
+}
+
+// ============ CHARTS ============
+let diaryPeriod = 7;
+let habitsPeriod = 7;
+let diaryChartInstance = null;
+let habitsChartInstance = null;
+
+function setDiaryPeriod(days){
+  diaryPeriod = days;
+  document.querySelectorAll('#diaryPeriodPicker button').forEach((b,i)=>{
+    b.classList.toggle('active', [7,14,30][i]===days);
+  });
+  renderDiaryChart();
+}
+
+function setHabitsPeriod(days){
+  habitsPeriod = days;
+  document.querySelectorAll('#habitsPeriodPicker button').forEach((b,i)=>{
+    b.classList.toggle('active', [7,14,30][i]===days);
+  });
+  renderHabitsChart();
+}
+
+function getLastNDates(n, fromDate){
+  const dates = [];
+  let d = new Date(fromDate + 'T12:00:00');
+  for(let i=n-1;i>=0;i--){
+    const dd = new Date(d);
+    dd.setDate(d.getDate()-i);
+    dates.push(dd.toISOString().split('T')[0]);
+  }
+  return dates;
+}
+
+function renderDiaryChart(){
+  const canvas = document.getElementById('diaryChart');
+  if(!canvas || typeof Chart === 'undefined') return;
+
+  const dates = getLastNDates(diaryPeriod, currentDate);
+  const labels = dates.map(d=>{
+    const dt = new Date(d+'T12:00:00');
+    return dt.toLocaleDateString('it-IT', {day:'numeric', month:'numeric'});
+  });
+
+  const kcalData = dates.map(date=>{
+    const entries = diary[date] || [];
+    let total = 0;
+    entries.forEach(e=>{
+      const f = foods[e.foodId];
+      if(f) total += f.kcal * (e.grams/100);
+    });
+    return Math.round(total);
+  });
+
+  const protData = dates.map(date=>{
+    const entries = diary[date] || [];
+    let total = 0;
+    entries.forEach(e=>{
+      const f = foods[e.foodId];
+      if(f) total += f.prot * (e.grams/100);
+    });
+    return Math.round(total);
+  });
+
+  if(diaryChartInstance) diaryChartInstance.destroy();
+
+  diaryChartInstance = new Chart(canvas, {
+    type: 'line',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Calorie',
+          data: kcalData,
+          borderColor: '#ff8a3d',
+          backgroundColor: 'rgba(255,138,61,.1)',
+          tension: 0.3,
+          yAxisID: 'y',
+          pointRadius: 3
+        },
+        {
+          label: 'Proteine (g)',
+          data: protData,
+          borderColor: '#5a8f2e',
+          backgroundColor: 'rgba(90,143,46,.1)',
+          tension: 0.3,
+          yAxisID: 'y1',
+          pointRadius: 3
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: { mode: 'index', intersect: false },
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        y: {
+          type: 'linear',
+          position: 'left',
+          title: { display: true, text: 'kcal', font: {size:10} },
+          grid: { color: '#f1f4ef' }
+        },
+        y1: {
+          type: 'linear',
+          position: 'right',
+          title: { display: true, text: 'g prot', font: {size:10} },
+          grid: { display: false }
+        },
+        x: {
+          grid: { display: false },
+          ticks: { font: {size:10} }
+        }
+      }
+    }
+  });
+}
+
+function renderHabitsChart(){
+  const canvas = document.getElementById('habitsChart');
+  if(!canvas || typeof Chart === 'undefined') return;
+
+  const dates = getLastNDates(habitsPeriod, currentDate);
+  const labels = dates.map(d=>{
+    const dt = new Date(d+'T12:00:00');
+    return dt.toLocaleDateString('it-IT', {day:'numeric', month:'numeric'});
+  });
+
+  const pctData = dates.map(date=>{
+    if(habits.length===0) return 0;
+    const log = habitLogs[date] || {};
+    const doneCount = habits.filter(h=>log[h.id]).length;
+    return Math.round((doneCount/habits.length)*100);
+  });
+
+  if(habitsChartInstance) habitsChartInstance.destroy();
+
+  habitsChartInstance = new Chart(canvas, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: '% completate',
+        data: pctData,
+        backgroundColor: pctData.map(p=> p>=100 ? '#c9f31d' : p>0 ? '#e3f5c4' : '#eef2ec'),
+        borderRadius: 6,
+        maxBarThickness: 28
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: {
+          min: 0, max: 100,
+          ticks: { callback: v => v+'%', font: {size:10} },
+          grid: { color: '#f1f4ef' }
+        },
+        x: {
+          grid: { display: false },
+          ticks: { font: {size:10} }
+        }
+      }
+    }
+  });
+}
+
+// ============ RENDER ALL ============
+function renderAll(){
+  updateDateDisplay();
+  renderFoods();
+  renderDiary();
+  renderHabits();
+  renderFeelings();
+  renderDiaryChart();
+  renderHabitsChart();
+}
+
+loadAll();
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js').catch(() => {});
+  });
+}
+</script>
+
+</body>
+</html>
