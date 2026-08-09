@@ -1,0 +1,1829 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0d2b1f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Tracker</title>
+<link rel="manifest" href="./manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --pitch: #0d2b1f;
+  --lime: #c9f31d;
+  --chalk: #f3f6f0;
+  --ink: #0c1410;
+  --line: #d9e8dd;
+  --amber: #ff8a3d;
+  --pink: #ff6b8a;
+  --blue: #4f9cd6;
+  --muted: #6f8378;
+  --card-bg: #ffffff;
+  --input-bg: #fafcf8;
+  --red: #e53e3e;
+  --green: #38a169;
+  --font-title: "Space Grotesk", system-ui, sans-serif;
+  --font-body: "Archivo", system-ui, sans-serif;
+  --radius: 14px;
+  --radius-sm: 10px;
+  --shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+[data-theme="dark"] {
+  --pitch: #c9f31d;
+  --lime: #0d2b1f;
+  --chalk: #0c1410;
+  --ink: #f3f6f0;
+  --line: #1e3a2a;
+  --muted: #8fa898;
+  --card-bg: #142820;
+  --input-bg: #1a3328;
+  --shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: var(--font-body);
+  background: var(--chalk);
+  color: var(--ink);
+  min-height: 100vh;
+  padding-bottom: 80px;
+  transition: background 0.3s, color 0.3s;
+}
+h1, h2, h3, h4 { font-family: var(--font-title); }
+.container { max-width: 640px; margin: 0 auto; padding: 0 16px; }
+
+/* Header */
+.header {
+  background: var(--pitch);
+  color: var(--lime);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.header h1 { font-size: 1.3rem; letter-spacing: -0.5px; }
+.header-actions { display: flex; gap: 8px; }
+.header-btn {
+  background: none;
+  border: none;
+  color: var(--lime);
+  font-size: 1.4rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 8px;
+  transition: opacity 0.2s;
+}
+.header-btn:hover { opacity: 0.7; }
+
+/* Bottom Nav */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--card-bg);
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: space-around;
+  padding: 8px 0 12px;
+  padding-bottom: env(safe-area-inset-bottom, 12px);
+  z-index: 100;
+}
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  background: none;
+  border: none;
+  color: var(--muted);
+  font-size: 0.7rem;
+  font-family: var(--font-body);
+  cursor: pointer;
+  padding: 4px 12px;
+  border-radius: 10px;
+  transition: all 0.2s;
+}
+.nav-item span { font-size: 1.4rem; }
+.nav-item.active { color: var(--pitch); font-weight: 600; }
+
+/* Tab content */
+.tab-content { display: none; padding: 16px 0; }
+.tab-content.active { display: block; }
+
+/* Cards */
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow);
+}
+
+/* Form elements */
+input[type="text"], input[type="number"], input[type="date"], input[type="time"],
+select, textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  background: var(--input-bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  transition: border-color 0.2s;
+}
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--pitch);
+}
+textarea { resize: vertical; min-height: 60px; }
+label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--muted);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.form-row { margin-bottom: 12px; }
+.form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-primary { background: var(--pitch); color: var(--lime); }
+.btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+.btn-danger { background: var(--red); color: #fff; }
+.btn-danger:hover { opacity: 0.9; }
+.btn-secondary { background: var(--line); color: var(--ink); }
+.btn-secondary:hover { background: var(--muted); color: #fff; }
+.btn-sm { padding: 6px 12px; font-size: 0.75rem; }
+.btn-full { width: 100%; }
+
+/* Pill tabs */
+.pill-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--line);
+  border-radius: 12px;
+  padding: 4px;
+  margin-bottom: 16px;
+}
+.pill-tab {
+  flex: 1;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  color: var(--muted);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+.pill-tab.active {
+  background: var(--card-bg);
+  color: var(--ink);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+/* Badges */
+.badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+.badge-red { background: #fee2e2; color: #dc2626; }
+.badge-amber { background: #fef3c7; color: #d97706; }
+.badge-blue { background: #dbeafe; color: #2563eb; }
+.badge-green { background: #d1fae5; color: #059669; }
+.badge-gray { background: #f3f4f6; color: #6b7280; }
+
+/* Priority */
+.priority-alta { border-left: 4px solid var(--red); }
+.priority-media { border-left: 4px solid var(--amber); }
+.priority-bassa { border-left: 4px solid var(--blue); }
+
+/* Filter bar */
+.filter-bar {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding: 8px 0;
+  margin-bottom: 12px;
+}
+.filter-btn {
+  padding: 6px 14px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--card-bg);
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+.filter-btn.active {
+  background: var(--pitch);
+  color: var(--lime);
+  border-color: var(--pitch);
+}
+
+/* Progress bars */
+.progress-container { margin-bottom: 10px; }
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+  color: var(--muted);
+}
+.progress-bar {
+  height: 8px;
+  background: var(--line);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+}
+.progress-fill.good { background: var(--green); }
+.progress-fill.warn { background: var(--amber); }
+.progress-fill.over { background: var(--red); }
+
+/* Day nav */
+.day-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+.day-nav button {
+  background: var(--line);
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink);
+}
+.day-nav span { font-weight: 600; font-size: 0.95rem; }
+
+/* Habit heatmap */
+.heatmap {
+  display: flex;
+  gap: 3px;
+  margin-top: 8px;
+}
+.heatmap-cell {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  background: var(--line);
+}
+.heatmap-cell.done { background: var(--green); }
+
+/* Toast */
+.toast {
+  position: fixed;
+  bottom: 90px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--ink);
+  color: var(--chalk);
+  padding: 12px 24px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  z-index: 1000;
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+/* Modal */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 200;
+  align-items: flex-end;
+  justify-content: center;
+}
+.modal-overlay.show { display: flex; }
+.modal {
+  background: var(--card-bg);
+  border-radius: 20px 20px 0 0;
+  padding: 24px 20px;
+  width: 100%;
+  max-width: 640px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+.modal h3 { margin-bottom: 16px; }
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--muted);
+}
+
+/* Grocery */
+.grocery-category-header {
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.8rem;
+  margin: 12px 0 6px;
+  text-transform: uppercase;
+}
+.grocery-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--line);
+}
+.grocery-item.checked { opacity: 0.5; text-decoration: line-through; }
+.grocery-item input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--green);
+}
+
+/* Charts */
+.chart-container { margin-bottom: 20px; }
+.chart-container canvas { width: 100% !important; height: 200px !important; }
+
+/* Streak */
+.streak { color: var(--amber); font-weight: 700; font-size: 0.85rem; }
+
+/* Misc */
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--muted);
+}
+.empty-state span { font-size: 2.5rem; display: block; margin-bottom: 12px; }
+.section-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  color: var(--muted);
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+}
+.reminder-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+.cat-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+.meal-food-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid var(--line);
+  font-size: 0.85rem;
+}
+.meal-food-item:last-child { border-bottom: none; }
+.macro-summary {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  margin-top: 8px;
+  font-size: 0.7rem;
+  text-align: center;
+}
+.macro-box {
+  background: var(--line);
+  padding: 4px;
+  border-radius: 6px;
+  font-weight: 600;
+}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <h1>Tracker</h1>
+  <div class="header-actions">
+    <button class="header-btn" data-action="toggleTheme" title="Tema">🌓</button>
+    <button class="header-btn" data-action="openSettings" title="Impostazioni">⚙️</button>
+  </div>
+</header>
+
+<main class="container">
+  <!-- TAB 1: PROMEMORIA -->
+  <div id="tab-promemoria" class="tab-content active">
+    <div class="card">
+      <h3 id="promemoria-form-title">Nuovo Promemoria</h3>
+      <div class="form-row">
+        <label>Titolo</label>
+        <input type="text" id="prom-titolo" placeholder="Cosa devi ricordare?">
+      </div>
+      <div class="form-row">
+        <label>Descrizione (opzionale)</label>
+        <textarea id="prom-desc" placeholder="Dettagli aggiuntivi..."></textarea>
+      </div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label>Data scadenza</label>
+          <input type="date" id="prom-data">
+        </div>
+        <div class="form-row">
+          <label>Ora scadenza</label>
+          <input type="time" id="prom-ora">
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label>Categoria</label>
+          <select id="prom-cat"></select>
+        </div>
+        <div class="form-row">
+          <label>Priorita</label>
+          <select id="prom-priorita">
+            <option value="alta">Alta</option>
+            <option value="media" selected>Media</option>
+            <option value="bassa">Bassa</option>
+          </select>
+        </div>
+      </div>
+      <button class="btn btn-primary btn-full" data-action="salvaPromemoria">Salva Promemoria</button>
+      <button class="btn btn-secondary btn-full" id="prom-cancel-btn" style="display:none;margin-top:8px" data-action="cancelEditPromemoria">Annulla Modifica</button>
+    </div>
+
+    <div class="filter-bar" id="prom-filters"></div>
+    <div id="prom-list"></div>
+
+    <div class="card" style="margin-top:16px">
+      <h4>Gestione Categorie</h4>
+      <div style="display:flex;gap:8px;margin-top:10px">
+        <input type="text" id="prom-new-cat" placeholder="Nuova categoria" style="flex:1">
+        <input type="color" id="prom-new-cat-color" value="#4f9cd6" style="width:44px;height:38px;border:none;border-radius:8px;cursor:pointer">
+        <button class="btn btn-primary btn-sm" data-action="addCategory">+</button>
+      </div>
+      <div id="prom-cat-list" style="margin-top:10px"></div>
+    </div>
+  </div>
+
+  <!-- TAB 2: NUTRIZIONE -->
+  <div id="tab-nutrizione" class="tab-content">
+    <div class="pill-tabs">
+      <button class="pill-tab active" data-action="switchNutriTab" data-tab="pasti">Pasti</button>
+      <button class="pill-tab" data-action="switchNutriTab" data-tab="alimenti">Alimenti</button>
+      <button class="pill-tab" data-action="switchNutriTab" data-tab="spesa">Spesa</button>
+    </div>
+
+    <!-- Sotto-tab PASTI -->
+    <div id="nutri-pasti" class="nutri-sub active">
+      <div class="day-nav">
+        <button data-action="changeDay" data-dir="-1">&#9664;</button>
+        <span id="pasti-date"></span>
+        <button data-action="changeDay" data-dir="1">&#9654;</button>
+      </div>
+
+      <div id="pasti-progress"></div>
+
+      <div class="card">
+        <h4>Aggiungi Pasto</h4>
+        <div class="form-row">
+          <label>Tipo pasto</label>
+          <select id="pasto-tipo">
+            <option>Colazione</option>
+            <option>Spuntino</option>
+            <option>Pranzo</option>
+            <option>Merenda</option>
+            <option>Cena</option>
+            <option>Altro</option>
+          </select>
+        </div>
+        <div class="form-grid">
+          <div class="form-row">
+            <label>Alimento</label>
+            <select id="pasto-alimento"></select>
+          </div>
+          <div class="form-row">
+            <label>Quantita (g)</label>
+            <input type="number" id="pasto-qty" placeholder="100" min="1">
+          </div>
+        </div>
+        <button class="btn btn-secondary btn-full" data-action="addFoodToMeal">+ Aggiungi alimento al pasto</button>
+        <div id="pasto-current-foods" style="margin-top:12px"></div>
+        <button class="btn btn-primary btn-full" style="margin-top:12px" data-action="saveMeal">Salva Pasto</button>
+      </div>
+
+      <div id="pasti-list"></div>
+    </div>
+
+    <!-- Sotto-tab ALIMENTI -->
+    <div id="nutri-alimenti" class="nutri-sub" style="display:none">
+      <div class="card">
+        <h4 id="alimenti-form-title">Nuovo Alimento</h4>
+        <div class="form-row">
+          <label>Nome</label>
+          <input type="text" id="alim-nome" placeholder="Nome alimento">
+        </div>
+        <div class="form-grid">
+          <div class="form-row">
+            <label>Kcal/100g</label>
+            <input type="number" id="alim-kcal" placeholder="0">
+          </div>
+          <div class="form-row">
+            <label>Proteine/100g</label>
+            <input type="number" id="alim-prot" placeholder="0" step="0.1">
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-row">
+            <label>Carboidrati/100g</label>
+            <input type="number" id="alim-carb" placeholder="0" step="0.1">
+          </div>
+          <div class="form-row">
+            <label>Grassi/100g</label>
+            <input type="number" id="alim-grass" placeholder="0" step="0.1">
+          </div>
+        </div>
+        <div class="form-row">
+          <label>Costo euro (opzionale)</label>
+          <input type="number" id="alim-costo" placeholder="0.00" step="0.01">
+        </div>
+        <button class="btn btn-primary btn-full" data-action="salvaAlimento">Salva Alimento</button>
+        <button class="btn btn-secondary btn-full" id="alim-cancel-btn" style="display:none;margin-top:8px" data-action="cancelEditAlimento">Annulla</button>
+      </div>
+      <div class="form-row">
+        <input type="text" id="alim-search" placeholder="Cerca alimento...">
+      </div>
+      <div id="alimenti-list"></div>
+    </div>
+
+    <!-- Sotto-tab SPESA -->
+    <div id="nutri-spesa" class="nutri-sub" style="display:none">
+      <div class="card">
+        <h4>Aggiungi Articolo</h4>
+        <div class="form-row">
+          <label>Nome</label>
+          <input type="text" id="spesa-nome" placeholder="Articolo">
+        </div>
+        <div class="form-grid">
+          <div class="form-row">
+            <label>Quantita</label>
+            <input type="number" id="spesa-qty" placeholder="1" min="1" value="1">
+          </div>
+          <div class="form-row">
+            <label>Unita</label>
+            <select id="spesa-unita">
+              <option>pezzi</option>
+              <option>kg</option>
+              <option>litri</option>
+              <option>confezioni</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-row">
+            <label>Categoria</label>
+            <select id="spesa-cat"></select>
+          </div>
+          <div class="form-row">
+            <label>Costo stimato euro</label>
+            <input type="number" id="spesa-costo" placeholder="0.00" step="0.01">
+          </div>
+        </div>
+        <button class="btn btn-primary btn-full" data-action="addSpesaItem">Aggiungi alla Lista</button>
+      </div>
+      <div style="display:flex;gap:8px;margin:12px 0;align-items:center">
+        <span id="spesa-count" style="font-size:0.85rem;font-weight:600;flex:1"></span>
+        <button class="btn btn-secondary btn-sm" data-action="clearCheckedSpesa">Svuota completati</button>
+        <button class="btn btn-danger btn-sm" data-action="clearAllSpesa">Svuota tutto</button>
+      </div>
+      <div id="spesa-list"></div>
+      <div class="card" style="margin-top:16px">
+        <h4>Gestione Categorie Spesa</h4>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <input type="text" id="spesa-new-cat" placeholder="Nuova categoria" style="flex:1">
+          <button class="btn btn-primary btn-sm" data-action="addSpesaCategory">+</button>
+        </div>
+        <div id="spesa-cat-list" style="margin-top:10px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: BENESSERE -->
+  <div id="tab-benessere" class="tab-content">
+    <div class="pill-tabs">
+      <button class="pill-tab active" data-action="switchBenessereTab" data-tab="abitudini">Abitudini</button>
+      <button class="pill-tab" data-action="switchBenessereTab" data-tab="sensazioni">Sensazioni</button>
+    </div>
+
+    <!-- Sotto-tab ABITUDINI -->
+    <div id="ben-abitudini" class="ben-sub active">
+      <div class="card">
+        <div style="display:flex;gap:8px">
+          <input type="text" id="habit-name" placeholder="Nuova abitudine..." style="flex:1">
+          <button class="btn btn-primary btn-sm" data-action="addHabit">+</button>
+        </div>
+      </div>
+      <div id="habits-list"></div>
+    </div>
+
+    <!-- Sotto-tab SENSAZIONI -->
+    <div id="ben-sensazioni" class="ben-sub" style="display:none">
+      <div class="day-nav">
+        <button data-action="changeSensDay" data-dir="-1">&#9664;</button>
+        <span id="sens-date"></span>
+        <button data-action="changeSensDay" data-dir="1">&#9654;</button>
+      </div>
+      <div class="card">
+        <div class="form-row">
+          <label>Umore: <span id="sens-umore-val">5</span>/10</label>
+          <input type="range" id="sens-umore" min="1" max="10" value="5" style="width:100%">
+        </div>
+        <div class="form-row">
+          <label>Energia: <span id="sens-energia-val">5</span>/10</label>
+          <input type="range" id="sens-energia" min="1" max="10" value="5" style="width:100%">
+        </div>
+        <div class="form-row">
+          <label>Sonno: <span id="sens-sonno-val">5</span>/10</label>
+          <input type="range" id="sens-sonno" min="1" max="10" value="5" style="width:100%">
+        </div>
+        <div class="form-row">
+          <label>Note</label>
+          <textarea id="sens-note" placeholder="Come ti senti oggi?"></textarea>
+        </div>
+        <button class="btn btn-primary btn-full" data-action="saveSensazione">Salva Sensazione</button>
+      </div>
+      <h4 style="margin:16px 0 8px">Storico (ultimi 7 giorni)</h4>
+      <div id="sens-history"></div>
+    </div>
+  </div>
+
+  <!-- TAB 4: GRAFICI -->
+  <div id="tab-grafici" class="tab-content">
+    <div class="filter-bar" style="justify-content:center">
+      <button class="filter-btn active" data-action="setChartPeriod" data-days="7">7gg</button>
+      <button class="filter-btn" data-action="setChartPeriod" data-days="30">30gg</button>
+      <button class="filter-btn" data-action="setChartPeriod" data-days="90">90gg</button>
+    </div>
+    <div id="charts-area">
+      <div class="chart-container"><canvas id="chart-kcal"></canvas></div>
+      <div class="chart-container"><canvas id="chart-prot"></canvas></div>
+      <div class="chart-container"><canvas id="chart-carb"></canvas></div>
+      <div class="chart-container"><canvas id="chart-grass"></canvas></div>
+    </div>
+    <div id="charts-fallback" style="display:none" class="empty-state">
+      <span>📊</span>
+      <p>Grafici disponibili solo online</p>
+    </div>
+  </div>
+</main>
+
+<!-- Bottom Navigation -->
+<nav class="bottom-nav">
+  <button class="nav-item active" data-action="switchTab" data-tab="promemoria">
+    <span>⏰</span>Promemoria
+  </button>
+  <button class="nav-item" data-action="switchTab" data-tab="nutrizione">
+    <span>🍽</span>Nutrizione
+  </button>
+  <button class="nav-item" data-action="switchTab" data-tab="benessere">
+    <span>🧘</span>Benessere
+  </button>
+  <button class="nav-item" data-action="switchTab" data-tab="grafici">
+    <span>📊</span>Grafici
+  </button>
+</nav>
+
+<!-- Settings Modal -->
+<div class="modal-overlay" id="settings-modal">
+  <div class="modal">
+    <h3>Impostazioni</h3>
+    <div class="form-grid">
+      <div class="form-row">
+        <label>Kcal min</label>
+        <input type="number" id="set-kcal-min" value="2100">
+      </div>
+      <div class="form-row">
+        <label>Kcal max</label>
+        <input type="number" id="set-kcal-max" value="2300">
+      </div>
+    </div>
+    <div class="form-grid">
+      <div class="form-row">
+        <label>Proteine min (g)</label>
+        <input type="number" id="set-prot-min" value="150">
+      </div>
+      <div class="form-row">
+        <label>Proteine max (g)</label>
+        <input type="number" id="set-prot-max" value="170">
+      </div>
+    </div>
+    <div class="form-grid">
+      <div class="form-row">
+        <label>Carboidrati min (g)</label>
+        <input type="number" id="set-carb-min" value="200">
+      </div>
+      <div class="form-row">
+        <label>Carboidrati max (g)</label>
+        <input type="number" id="set-carb-max" value="280">
+      </div>
+    </div>
+    <div class="form-grid">
+      <div class="form-row">
+        <label>Grassi min (g)</label>
+        <input type="number" id="set-grass-min" value="50">
+      </div>
+      <div class="form-row">
+        <label>Grassi max (g)</label>
+        <input type="number" id="set-grass-max" value="80">
+      </div>
+    </div>
+    <button class="btn btn-primary btn-full" data-action="saveSettings" style="margin-top:12px">Salva Impostazioni</button>
+    <hr style="margin:16px 0;border-color:var(--line)">
+    <h4>Esporta / Importa Dati</h4>
+    <div style="display:flex;gap:8px;margin-top:12px">
+      <button class="btn btn-secondary" data-action="exportData" style="flex:1">Esporta JSON</button>
+      <button class="btn btn-secondary" data-action="triggerImport" style="flex:1">Importa JSON</button>
+      <input type="file" id="import-file" accept=".json" style="display:none">
+    </div>
+    <button class="btn btn-full" style="margin-top:16px;background:var(--line);color:var(--ink)" data-action="closeSettings">Chiudi</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+
+// === STORAGE HELPERS ===
+function lsGet(key, def) {
+  try { var v = localStorage.getItem(key); return v ? JSON.parse(v) : def; }
+  catch(e) { return def; }
+}
+function lsSet(key, val) {
+  try { localStorage.setItem(key, JSON.stringify(val)); } catch(e) {}
+}
+
+// === TOAST ===
+function showToast(msg) {
+  var t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(function() { t.classList.remove("show"); }, 2500);
+}
+
+// === THEME ===
+function toggleTheme() {
+  var html = document.documentElement;
+  var curr = html.getAttribute("data-theme");
+  var next = curr === "dark" ? "light" : "dark";
+  html.setAttribute("data-theme", next);
+  lsSet("theme", next);
+}
+(function() {
+  var saved = lsGet("theme", "light");
+  document.documentElement.setAttribute("data-theme", saved);
+})();
+
+// === TAB SWITCHING ===
+function switchTab(name, btn) {
+  document.querySelectorAll(".tab-content").forEach(function(el) { el.classList.remove("active"); });
+  document.getElementById("tab-" + name).classList.add("active");
+  document.querySelectorAll(".nav-item").forEach(function(el) { el.classList.remove("active"); });
+  if (btn) btn.classList.add("active");
+  if (name === "grafici") renderCharts();
+  if (name === "nutrizione") { renderPasti(); updateAlimSelect(); }
+}
+
+// === SETTINGS ===
+var settings = lsGet("settings", {
+  kcalMin: 2100, kcalMax: 2300,
+  protMin: 150, protMax: 170,
+  carbMin: 200, carbMax: 280,
+  grassMin: 50, grassMax: 80
+});
+
+function openSettings() {
+  document.getElementById("set-kcal-min").value = settings.kcalMin;
+  document.getElementById("set-kcal-max").value = settings.kcalMax;
+  document.getElementById("set-prot-min").value = settings.protMin;
+  document.getElementById("set-prot-max").value = settings.protMax;
+  document.getElementById("set-carb-min").value = settings.carbMin;
+  document.getElementById("set-carb-max").value = settings.carbMax;
+  document.getElementById("set-grass-min").value = settings.grassMin;
+  document.getElementById("set-grass-max").value = settings.grassMax;
+  document.getElementById("settings-modal").classList.add("show");
+}
+function closeSettings() {
+  document.getElementById("settings-modal").classList.remove("show");
+}
+function saveSettings() {
+  settings.kcalMin = parseInt(document.getElementById("set-kcal-min").value) || 2100;
+  settings.kcalMax = parseInt(document.getElementById("set-kcal-max").value) || 2300;
+  settings.protMin = parseInt(document.getElementById("set-prot-min").value) || 150;
+  settings.protMax = parseInt(document.getElementById("set-prot-max").value) || 170;
+  settings.carbMin = parseInt(document.getElementById("set-carb-min").value) || 200;
+  settings.carbMax = parseInt(document.getElementById("set-carb-max").value) || 280;
+  settings.grassMin = parseInt(document.getElementById("set-grass-min").value) || 50;
+  settings.grassMax = parseInt(document.getElementById("set-grass-max").value) || 80;
+  lsSet("settings", settings);
+  showToast("Impostazioni salvate");
+  closeSettings();
+  renderPasti();
+}
+
+// === EXPORT / IMPORT ===
+function exportData() {
+  var data = {};
+  try {
+    var keys = ["promemoria","categories","alimenti","meals","spesa","spesaCats","habits","sensazioni","settings","theme"];
+    keys.forEach(function(k) { data[k] = lsGet(k, null); });
+  } catch(e) {}
+  var blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "tracker_backup.json";
+  a.click();
+  showToast("Dati esportati");
+}
+function importData(ev) {
+  var file = ev.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var data = JSON.parse(e.target.result);
+      Object.keys(data).forEach(function(k) {
+        if (data[k] !== null) lsSet(k, data[k]);
+      });
+      showToast("Dati importati con successo");
+      location.reload();
+    } catch(err) {
+      showToast("Errore nel file");
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ==========================================
+// TAB 1: PROMEMORIA
+// ==========================================
+var promemoria = lsGet("promemoria", []);
+var categories = lsGet("categories", [
+  {name: "Casa", color: "#38a169"},
+  {name: "Lavoro", color: "#4f9cd6"},
+  {name: "Salute", color: "#ff6b8a"},
+  {name: "Finanze", color: "#ff8a3d"},
+  {name: "Altro", color: "#6f8378"}
+]);
+var promEditId = null;
+var promFilter = "tutti";
+
+function renderCatSelect() {
+  var sel = document.getElementById("prom-cat");
+  sel.innerHTML = categories.map(function(c) {
+    return '<option value="' + c.name + '">' + c.name + '</option>';
+  }).join("");
+}
+function renderCatList() {
+  var el = document.getElementById("prom-cat-list");
+  el.innerHTML = categories.map(function(c, i) {
+    return '<div style="display:flex;align-items:center;gap:8px;margin:4px 0"><span class="cat-dot" style="background:' + c.color + '"></span><span style="flex:1;font-size:0.85rem">' + c.name + '</span>' +
+    (i >= 5 ? '<button class="btn btn-danger btn-sm" data-action="deleteCategory" data-index="' + i + '">x</button>' : '') + '</div>';
+  }).join("");
+}
+function addCategory() {
+  var name = document.getElementById("prom-new-cat").value.trim();
+  var color = document.getElementById("prom-new-cat-color").value;
+  if (!name) return;
+  categories.push({name: name, color: color});
+  lsSet("categories", categories);
+  document.getElementById("prom-new-cat").value = "";
+  renderCatSelect();
+  renderCatList();
+  showToast("Categoria aggiunta");
+}
+function deleteCategory(i) {
+  if (!confirm("Eliminare la categoria " + categories[i].name + "?")) return;
+  categories.splice(i, 1);
+  lsSet("categories", categories);
+  renderCatSelect();
+  renderCatList();
+  showToast("Categoria eliminata");
+}
+
+function getDateBadge(dateStr, completed) {
+  if (completed) return '<span class="badge badge-gray">Completato</span>';
+  if (!dateStr) return '<span class="badge badge-green">Prossimi</span>';
+  var today = new Date(); today.setHours(0,0,0,0);
+  var d = new Date(dateStr); d.setHours(0,0,0,0);
+  var diff = Math.floor((d - today) / 86400000);
+  if (diff < 0) return '<span class="badge badge-red">Scaduto</span>';
+  if (diff === 0) return '<span class="badge badge-amber">Oggi</span>';
+  if (diff === 1) return '<span class="badge badge-blue">Domani</span>';
+  return '<span class="badge badge-green">Prossimi</span>';
+}
+function getCatColor(name) {
+  var cat = categories.find(function(c) { return c.name === name; });
+  return cat ? cat.color : "#6f8378";
+}
+function sortPromemoria(arr) {
+  return arr.sort(function(a, b) {
+    if (a.completed && !b.completed) return 1;
+    if (!a.completed && b.completed) return -1;
+    if (a.completed && b.completed) return 0;
+    var da = a.data ? new Date(a.data + "T" + (a.ora || "23:59")) : new Date("2099-12-31");
+    var db = b.data ? new Date(b.data + "T" + (b.ora || "23:59")) : new Date("2099-12-31");
+    var now = new Date();
+    var aExp = da < now;
+    var bExp = db < now;
+    if (aExp && !bExp) return -1;
+    if (!aExp && bExp) return 1;
+    return da - db;
+  });
+}
+function filterPromemoria() {
+  var today = new Date(); today.setHours(0,0,0,0);
+  return promemoria.filter(function(p) {
+    if (promFilter === "tutti") return true;
+    if (promFilter === "completati") return p.completed;
+    if (p.completed) return false;
+    if (!p.data) return promFilter === "prossimi";
+    var d = new Date(p.data); d.setHours(0,0,0,0);
+    var diff = Math.floor((d - today) / 86400000);
+    if (promFilter === "scaduti") return diff < 0;
+    if (promFilter === "oggi") return diff === 0;
+    if (promFilter === "prossimi") return diff > 0;
+    return true;
+  });
+}
+function renderPromFilters() {
+  var filters = [
+    {id:"tutti",label:"Tutti"},
+    {id:"scaduti",label:"Scaduti"},
+    {id:"oggi",label:"Oggi"},
+    {id:"prossimi",label:"Prossimi"},
+    {id:"completati",label:"Completati"}
+  ];
+  document.getElementById("prom-filters").innerHTML = filters.map(function(f) {
+    return '<button class="filter-btn' + (promFilter === f.id ? ' active' : '') + '" data-action="setPromFilter" data-filter="' + f.id + '">' + f.label + '</button>';
+  }).join("");
+}
+function setPromFilter(f) {
+  promFilter = f;
+  renderPromFilters();
+  renderPromList();
+}
+function renderPromList() {
+  var filtered = sortPromemoria(filterPromemoria());
+  var el = document.getElementById("prom-list");
+  if (filtered.length === 0) {
+    el.innerHTML = '<div class="empty-state"><span>\ud83d\udccb</span><p>Nessun promemoria</p></div>';
+    return;
+  }
+  el.innerHTML = filtered.map(function(p) {
+    var catColor = getCatColor(p.categoria);
+    var badge = getDateBadge(p.data, p.completed);
+    var priClass = "priority-" + p.priorita;
+    return '<div class="card ' + priClass + '" style="' + (p.completed ? 'opacity:0.6' : '') + '">' +
+      '<div style="display:flex;justify-content:space-between;align-items:start">' +
+        '<div><strong>' + p.titolo + '</strong>' + (p.descrizione ? '<p style="font-size:0.8rem;color:var(--muted);margin-top:4px">' + p.descrizione + '</p>' : '') + '</div>' +
+        badge +
+      '</div>' +
+      '<div style="margin-top:8px;font-size:0.75rem;color:var(--muted)">' +
+        '<span class="cat-dot" style="background:' + catColor + '"></span>' + p.categoria +
+        (p.data ? ' | ' + formatDate(p.data) : '') +
+        (p.ora ? ' ' + p.ora : '') +
+        ' | ' + p.priorita.charAt(0).toUpperCase() + p.priorita.slice(1) +
+      '</div>' +
+      '<div class="reminder-actions">' +
+        '<button class="btn btn-sm btn-secondary" data-action="editPromemoria" data-id="' + p.id + '">' + (p.completed ? '' : '\u270f\ufe0f') + ' Modifica</button>' +
+        '<button class="btn btn-sm ' + (p.completed ? 'btn-secondary' : 'btn-primary') + '" data-action="togglePromemoria" data-id="' + p.id + '">' + (p.completed ? '\u21a9\ufe0f Ripristina' : '\u2713 Completa') + '</button>' +
+        '<button class="btn btn-sm btn-danger" data-action="deletePromemoria" data-id="' + p.id + '">\ud83d\uddd1</button>' +
+      '</div>' +
+    '</div>';
+  }).join("");
+}
+function salvaPromemoria() {
+  var titolo = document.getElementById("prom-titolo").value.trim();
+  if (!titolo) { showToast("Inserisci un titolo"); return; }
+  var obj = {
+    id: promEditId || Date.now().toString(36) + Math.random().toString(36).slice(2,6),
+    titolo: titolo,
+    descrizione: document.getElementById("prom-desc").value.trim(),
+    data: document.getElementById("prom-data").value,
+    ora: document.getElementById("prom-ora").value,
+    categoria: document.getElementById("prom-cat").value,
+    priorita: document.getElementById("prom-priorita").value,
+    completed: false
+  };
+  if (promEditId) {
+    var idx = promemoria.findIndex(function(p) { return p.id === promEditId; });
+    if (idx >= 0) { obj.completed = promemoria[idx].completed; promemoria[idx] = obj; }
+    promEditId = null;
+    document.getElementById("prom-cancel-btn").style.display = "none";
+    document.getElementById("promemoria-form-title").textContent = "Nuovo Promemoria";
+  } else {
+    promemoria.push(obj);
+  }
+  lsSet("promemoria", promemoria);
+  clearPromForm();
+  renderPromList();
+  showToast("Promemoria salvato");
+}
+function clearPromForm() {
+  document.getElementById("prom-titolo").value = "";
+  document.getElementById("prom-desc").value = "";
+  document.getElementById("prom-data").value = "";
+  document.getElementById("prom-ora").value = "";
+  document.getElementById("prom-priorita").value = "media";
+}
+function editPromemoria(id) {
+  var p = promemoria.find(function(x) { return x.id === id; });
+  if (!p) return;
+  promEditId = id;
+  document.getElementById("prom-titolo").value = p.titolo;
+  document.getElementById("prom-desc").value = p.descrizione || "";
+  document.getElementById("prom-data").value = p.data || "";
+  document.getElementById("prom-ora").value = p.ora || "";
+  document.getElementById("prom-cat").value = p.categoria;
+  document.getElementById("prom-priorita").value = p.priorita;
+  document.getElementById("prom-cancel-btn").style.display = "block";
+  document.getElementById("promemoria-form-title").textContent = "Modifica Promemoria";
+  window.scrollTo({top: 0, behavior: "smooth"});
+}
+function cancelEditPromemoria() {
+  promEditId = null;
+  clearPromForm();
+  document.getElementById("prom-cancel-btn").style.display = "none";
+  document.getElementById("promemoria-form-title").textContent = "Nuovo Promemoria";
+}
+function togglePromemoria(id) {
+  var p = promemoria.find(function(x) { return x.id === id; });
+  if (p) p.completed = !p.completed;
+  lsSet("promemoria", promemoria);
+  renderPromList();
+  showToast(p.completed ? "Completato!" : "Ripristinato");
+}
+function deletePromemoria(id) {
+  if (!confirm("Eliminare questo promemoria?")) return;
+  promemoria = promemoria.filter(function(x) { return x.id !== id; });
+  lsSet("promemoria", promemoria);
+  renderPromList();
+  showToast("Eliminato");
+}
+
+// ==========================================
+// TAB 2: NUTRIZIONE
+// ==========================================
+function switchNutriTab(name) {
+  document.querySelectorAll(".nutri-sub").forEach(function(el) { el.style.display = "none"; });
+  document.getElementById("nutri-" + name).style.display = "block";
+  var tabs = document.querySelectorAll("#tab-nutrizione .pill-tab");
+  tabs.forEach(function(t) { t.classList.remove("active"); });
+  var idx = {pasti:0, alimenti:1, spesa:2}[name];
+  tabs[idx].classList.add("active");
+  if (name === "pasti") { renderPasti(); updateAlimSelect(); }
+  if (name === "alimenti") renderAlimenti();
+  if (name === "spesa") renderSpesa();
+}
+
+// --- ALIMENTI DB ---
+var alimenti = lsGet("alimenti", [
+  {id:"a1",nome:"Pollo petto",kcal:165,prot:31,carb:0,grass:3.6,costo:0},
+  {id:"a2",nome:"Riso bianco",kcal:130,prot:2.7,carb:28,grass:0.3,costo:0},
+  {id:"a3",nome:"Uova",kcal:155,prot:13,carb:1.1,grass:11,costo:0},
+  {id:"a4",nome:"Pasta",kcal:131,prot:5,carb:25,grass:1.1,costo:0},
+  {id:"a5",nome:"Banana",kcal:89,prot:1.1,carb:23,grass:0.3,costo:0},
+  {id:"a6",nome:"Latte intero",kcal:61,prot:3.2,carb:4.8,grass:3.3,costo:0}
+]);
+var alimEditId = null;
+
+function renderAlimenti() {
+  var search = (document.getElementById("alim-search").value || "").toLowerCase();
+  var filtered = alimenti.filter(function(a) { return a.nome.toLowerCase().indexOf(search) >= 0; });
+  var el = document.getElementById("alimenti-list");
+  if (filtered.length === 0) {
+    el.innerHTML = '<div class="empty-state"><span>\ud83e\udd57</span><p>Nessun alimento trovato</p></div>';
+    return;
+  }
+  el.innerHTML = filtered.map(function(a) {
+    return '<div class="card"><div style="display:flex;justify-content:space-between;align-items:center">' +
+      '<strong>' + a.nome + '</strong>' +
+      '<div style="display:flex;gap:4px"><button class="btn btn-sm btn-secondary" data-action="editAlimento" data-id="' + a.id + '">\u270f\ufe0f</button><button class="btn btn-sm btn-danger" data-action="deleteAlimento" data-id="' + a.id + '">\ud83d\uddd1</button></div>' +
+    '</div>' +
+    '<div class="macro-summary" style="margin-top:8px">' +
+      '<div class="macro-box">' + a.kcal + ' kcal</div>' +
+      '<div class="macro-box">P ' + a.prot + 'g</div>' +
+      '<div class="macro-box">C ' + a.carb + 'g</div>' +
+      '<div class="macro-box">G ' + a.grass + 'g</div>' +
+    '</div></div>';
+  }).join("");
+}
+function salvaAlimento() {
+  var nome = document.getElementById("alim-nome").value.trim();
+  if (!nome) { showToast("Inserisci il nome"); return; }
+  var obj = {
+    id: alimEditId || Date.now().toString(36) + Math.random().toString(36).slice(2,6),
+    nome: nome,
+    kcal: parseFloat(document.getElementById("alim-kcal").value) || 0,
+    prot: parseFloat(document.getElementById("alim-prot").value) || 0,
+    carb: parseFloat(document.getElementById("alim-carb").value) || 0,
+    grass: parseFloat(document.getElementById("alim-grass").value) || 0,
+    costo: parseFloat(document.getElementById("alim-costo").value) || 0
+  };
+  if (alimEditId) {
+    var idx = alimenti.findIndex(function(a) { return a.id === alimEditId; });
+    if (idx >= 0) alimenti[idx] = obj;
+    alimEditId = null;
+    document.getElementById("alim-cancel-btn").style.display = "none";
+    document.getElementById("alimenti-form-title").textContent = "Nuovo Alimento";
+  } else {
+    alimenti.push(obj);
+  }
+  lsSet("alimenti", alimenti);
+  clearAlimForm();
+  renderAlimenti();
+  updateAlimSelect();
+  showToast("Alimento salvato");
+}
+function clearAlimForm() {
+  document.getElementById("alim-nome").value = "";
+  document.getElementById("alim-kcal").value = "";
+  document.getElementById("alim-prot").value = "";
+  document.getElementById("alim-carb").value = "";
+  document.getElementById("alim-grass").value = "";
+  document.getElementById("alim-costo").value = "";
+}
+function editAlimento(id) {
+  var a = alimenti.find(function(x) { return x.id === id; });
+  if (!a) return;
+  alimEditId = id;
+  document.getElementById("alim-nome").value = a.nome;
+  document.getElementById("alim-kcal").value = a.kcal;
+  document.getElementById("alim-prot").value = a.prot;
+  document.getElementById("alim-carb").value = a.carb;
+  document.getElementById("alim-grass").value = a.grass;
+  document.getElementById("alim-costo").value = a.costo || "";
+  document.getElementById("alim-cancel-btn").style.display = "block";
+  document.getElementById("alimenti-form-title").textContent = "Modifica Alimento";
+}
+function cancelEditAlimento() {
+  alimEditId = null;
+  clearAlimForm();
+  document.getElementById("alim-cancel-btn").style.display = "none";
+  document.getElementById("alimenti-form-title").textContent = "Nuovo Alimento";
+}
+function deleteAlimento(id) {
+  if (!confirm("Eliminare questo alimento?")) return;
+  alimenti = alimenti.filter(function(x) { return x.id !== id; });
+  lsSet("alimenti", alimenti);
+  renderAlimenti();
+  updateAlimSelect();
+  showToast("Alimento eliminato");
+}
+
+// --- PASTI ---
+var meals = lsGet("meals", []);
+var currentDay = new Date();
+var currentMealFoods = [];
+
+function formatDateKey(d) {
+  return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0") + "-" + String(d.getDate()).padStart(2,"0");
+}
+function formatDate(str) {
+  var parts = str.split("-");
+  return parts[2] + "/" + parts[1] + "/" + parts[0];
+}
+function changeDay(dir) {
+  currentDay.setDate(currentDay.getDate() + dir);
+  renderPasti();
+}
+function updateAlimSelect() {
+  var sel = document.getElementById("pasto-alimento");
+  sel.innerHTML = alimenti.map(function(a) {
+    return '<option value="' + a.id + '">' + a.nome + '</option>';
+  }).join("");
+}
+function addFoodToMeal() {
+  var alimId = document.getElementById("pasto-alimento").value;
+  var qty = parseInt(document.getElementById("pasto-qty").value) || 100;
+  var alim = alimenti.find(function(a) { return a.id === alimId; });
+  if (!alim) { showToast("Seleziona un alimento"); return; }
+  currentMealFoods.push({alimId: alim.id, nome: alim.nome, qty: qty, kcal: alim.kcal, prot: alim.prot, carb: alim.carb, grass: alim.grass});
+  document.getElementById("pasto-qty").value = "";
+  renderCurrentMealFoods();
+}
+function removeMealFood(i) {
+  currentMealFoods.splice(i, 1);
+  renderCurrentMealFoods();
+}
+function renderCurrentMealFoods() {
+  var el = document.getElementById("pasto-current-foods");
+  if (currentMealFoods.length === 0) { el.innerHTML = ""; return; }
+  var html = '<div style="border:1px solid var(--line);border-radius:10px;padding:10px">';
+  html += '<p class="section-title">Alimenti nel pasto</p>';
+  currentMealFoods.forEach(function(f, i) {
+    var mult = f.qty / 100;
+    html += '<div class="meal-food-item"><span>' + f.nome + ' (' + f.qty + 'g) - ' + Math.round(f.kcal * mult) + ' kcal</span><button class="btn btn-danger btn-sm" data-action="removeMealFood" data-index="' + i + '">x</button></div>';
+  });
+  html += '</div>';
+  el.innerHTML = html;
+}
+function saveMeal() {
+  if (currentMealFoods.length === 0) { showToast("Aggiungi almeno un alimento"); return; }
+  var meal = {
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2,6),
+    date: formatDateKey(currentDay),
+    tipo: document.getElementById("pasto-tipo").value,
+    foods: currentMealFoods.slice()
+  };
+  meals.push(meal);
+  lsSet("meals", meals);
+  currentMealFoods = [];
+  renderCurrentMealFoods();
+  renderPasti();
+  showToast("Pasto salvato");
+}
+function deleteMeal(id) {
+  if (!confirm("Eliminare questo pasto?")) return;
+  meals = meals.filter(function(m) { return m.id !== id; });
+  lsSet("meals", meals);
+  renderPasti();
+  showToast("Pasto eliminato");
+}
+function deleteMealFood(mealId, foodIdx) {
+  var meal = meals.find(function(m) { return m.id === mealId; });
+  if (!meal) return;
+  meal.foods.splice(foodIdx, 1);
+  if (meal.foods.length === 0) {
+    meals = meals.filter(function(m) { return m.id !== mealId; });
+  }
+  lsSet("meals", meals);
+  renderPasti();
+}
+function getDayTotals(dateKey) {
+  var dayMeals = meals.filter(function(m) { return m.date === dateKey; });
+  var totals = {kcal: 0, prot: 0, carb: 0, grass: 0};
+  dayMeals.forEach(function(m) {
+    m.foods.forEach(function(f) {
+      var mult = f.qty / 100;
+      totals.kcal += f.kcal * mult;
+      totals.prot += f.prot * mult;
+      totals.carb += f.carb * mult;
+      totals.grass += f.grass * mult;
+    });
+  });
+  return totals;
+}
+function renderProgressBars(totals) {
+  var bars = [
+    {label:"Kcal", val: totals.kcal, min: settings.kcalMin, max: settings.kcalMax},
+    {label:"Proteine", val: totals.prot, min: settings.protMin, max: settings.protMax},
+    {label:"Carboidrati", val: totals.carb, min: settings.carbMin, max: settings.carbMax},
+    {label:"Grassi", val: totals.grass, min: settings.grassMin, max: settings.grassMax}
+  ];
+  return bars.map(function(b) {
+    var pct = Math.min((b.val / b.max) * 100, 100);
+    var cls = "good";
+    if (b.val > b.max) cls = "over";
+    else if (b.val < b.min) cls = "warn";
+    return '<div class="progress-container"><div class="progress-label"><span>' + b.label + '</span><span>' + Math.round(b.val) + ' / ' + b.min + '-' + b.max + '</span></div><div class="progress-bar"><div class="progress-fill ' + cls + '" style="width:' + pct + '%"></div></div></div>';
+  }).join("");
+}
+function renderPasti() {
+  var dateKey = formatDateKey(currentDay);
+  document.getElementById("pasti-date").textContent = formatDate(dateKey);
+  var totals = getDayTotals(dateKey);
+  document.getElementById("pasti-progress").innerHTML = renderProgressBars(totals);
+  var dayMeals = meals.filter(function(m) { return m.date === dateKey; });
+  var el = document.getElementById("pasti-list");
+  if (dayMeals.length === 0) {
+    el.innerHTML = '<div class="empty-state"><span>\ud83c\udf7d</span><p>Nessun pasto registrato</p></div>';
+    return;
+  }
+  el.innerHTML = dayMeals.map(function(m) {
+    var mTotals = {kcal:0, prot:0, carb:0, grass:0};
+    var foodsHtml = m.foods.map(function(f, fi) {
+      var mult = f.qty / 100;
+      mTotals.kcal += f.kcal * mult;
+      mTotals.prot += f.prot * mult;
+      mTotals.carb += f.carb * mult;
+      mTotals.grass += f.grass * mult;
+      return '<div class="meal-food-item"><span>' + f.nome + ' (' + f.qty + 'g)</span><div style="display:flex;gap:4px;align-items:center"><span style="font-size:0.7rem;color:var(--muted)">' + Math.round(f.kcal*mult) + 'kcal</span><button class="btn btn-danger btn-sm" style="padding:2px 6px;font-size:0.65rem" data-action="deleteMealFood" data-meal-id="' + m.id + '" data-food-index="' + fi + '">x</button></div></div>';
+    }).join("");
+    return '<div class="card"><div style="display:flex;justify-content:space-between;align-items:center"><h4>' + m.tipo + '</h4><button class="btn btn-danger btn-sm" data-action="deleteMeal" data-id="' + m.id + '">\ud83d\uddd1</button></div>' +
+      foodsHtml +
+      '<div class="macro-summary"><div class="macro-box">' + Math.round(mTotals.kcal) + ' kcal</div><div class="macro-box">P ' + Math.round(mTotals.prot) + 'g</div><div class="macro-box">C ' + Math.round(mTotals.carb) + 'g</div><div class="macro-box">G ' + Math.round(mTotals.grass) + 'g</div></div></div>';
+  }).join("");
+}
+
+// --- SPESA ---
+var spesa = lsGet("spesa", []);
+var spesaCats = lsGet("spesaCats", [
+  {name:"Frutta/Verdura",color:"#38a169"},
+  {name:"Carne/Pesce",color:"#e53e3e"},
+  {name:"Latticini",color:"#4f9cd6"},
+  {name:"Cereali/Pane",color:"#d97706"},
+  {name:"Bevande",color:"#7c3aed"},
+  {name:"Surgelati",color:"#06b6d4"},
+  {name:"Igiene/Casa",color:"#ec4899"},
+  {name:"Altro",color:"#6f8378"}
+]);
+
+function renderSpesaCatSelect() {
+  var sel = document.getElementById("spesa-cat");
+  sel.innerHTML = spesaCats.map(function(c) {
+    return '<option value="' + c.name + '">' + c.name + '</option>';
+  }).join("");
+}
+function renderSpesaCatList() {
+  var el = document.getElementById("spesa-cat-list");
+  el.innerHTML = spesaCats.map(function(c, i) {
+    return '<div style="display:flex;align-items:center;gap:8px;margin:4px 0"><span class="cat-dot" style="background:' + c.color + '"></span><span style="flex:1;font-size:0.85rem">' + c.name + '</span>' +
+    (i >= 8 ? '<button class="btn btn-danger btn-sm" data-action="deleteSpesaCat" data-index="' + i + '">x</button>' : '') + '</div>';
+  }).join("");
+}
+function addSpesaCategory() {
+  var name = document.getElementById("spesa-new-cat").value.trim();
+  if (!name) return;
+  spesaCats.push({name: name, color: "#" + Math.floor(Math.random()*16777215).toString(16).padStart(6,"0")});
+  lsSet("spesaCats", spesaCats);
+  document.getElementById("spesa-new-cat").value = "";
+  renderSpesaCatSelect();
+  renderSpesaCatList();
+  showToast("Categoria aggiunta");
+}
+function deleteSpesaCat(i) {
+  if (!confirm("Eliminare " + spesaCats[i].name + "?")) return;
+  spesaCats.splice(i, 1);
+  lsSet("spesaCats", spesaCats);
+  renderSpesaCatSelect();
+  renderSpesaCatList();
+}
+function addSpesaItem() {
+  var nome = document.getElementById("spesa-nome").value.trim();
+  if (!nome) { showToast("Inserisci il nome"); return; }
+  spesa.push({
+    id: Date.now().toString(36) + Math.random().toString(36).slice(2,6),
+    nome: nome,
+    qty: parseInt(document.getElementById("spesa-qty").value) || 1,
+    unita: document.getElementById("spesa-unita").value,
+    categoria: document.getElementById("spesa-cat").value,
+    costo: parseFloat(document.getElementById("spesa-costo").value) || 0,
+    checked: false
+  });
+  lsSet("spesa", spesa);
+  document.getElementById("spesa-nome").value = "";
+  document.getElementById("spesa-qty").value = "1";
+  document.getElementById("spesa-costo").value = "";
+  renderSpesa();
+  showToast("Articolo aggiunto");
+}
+function toggleSpesaItem(id) {
+  var item = spesa.find(function(s) { return s.id === id; });
+  if (item) item.checked = !item.checked;
+  lsSet("spesa", spesa);
+  renderSpesa();
+}
+function clearCheckedSpesa() {
+  spesa = spesa.filter(function(s) { return !s.checked; });
+  lsSet("spesa", spesa);
+  renderSpesa();
+  showToast("Completati rimossi");
+}
+function clearAllSpesa() {
+  if (!confirm("Svuotare tutta la lista?")) return;
+  spesa = [];
+  lsSet("spesa", spesa);
+  renderSpesa();
+  showToast("Lista svuotata");
+}
+function renderSpesa() {
+  var total = 0;
+  var count = spesa.length;
+  spesa.forEach(function(s) { total += s.costo * s.qty; });
+  document.getElementById("spesa-count").textContent = count + " articoli | Costo stimato: " + total.toFixed(2) + " euro";
+
+  var grouped = {};
+  spesaCats.forEach(function(c) { grouped[c.name] = []; });
+  spesa.forEach(function(s) {
+    if (!grouped[s.categoria]) grouped[s.categoria] = [];
+    grouped[s.categoria].push(s);
+  });
+
+  var el = document.getElementById("spesa-list");
+  var html = "";
+  Object.keys(grouped).forEach(function(cat) {
+    if (grouped[cat].length === 0) return;
+    var catObj = spesaCats.find(function(c) { return c.name === cat; });
+    var color = catObj ? catObj.color : "#6f8378";
+    html += '<div class="grocery-category-header" style="background:' + color + '22;color:' + color + '">' + cat + ' (' + grouped[cat].length + ')</div>';
+    grouped[cat].forEach(function(s) {
+      html += '<div class="grocery-item' + (s.checked ? ' checked' : '') + '">' +
+        '<input type="checkbox" ' + (s.checked ? 'checked' : '') + ' data-action="toggleSpesaItem" data-id="' + s.id + '">' +
+        '<span style="flex:1">' + s.nome + ' <small style="color:var(--muted)">(' + s.qty + ' ' + s.unita + ')</small></span>' +
+        (s.costo ? '<span style="font-size:0.8rem;font-weight:600">' + (s.costo * s.qty).toFixed(2) + ' euro</span>' : '') +
+      '</div>';
+    });
+  });
+  el.innerHTML = html || '<div class="empty-state"><span>\ud83d\uded2</span><p>Lista vuota</p></div>';
+}
+
+// ==========================================
+// TAB 3: BENESSERE
+// ==========================================
+function switchBenessereTab(name) {
+  document.querySelectorAll(".ben-sub").forEach(function(el) { el.style.display = "none"; });
+  document.getElementById("ben-" + name).style.display = "block";
+  var tabs = document.querySelectorAll("#tab-benessere .pill-tab");
+  tabs.forEach(function(t) { t.classList.remove("active"); });
+  var idx = name === "abitudini" ? 0 : 1;
+  tabs[idx].classList.add("active");
+  if (name === "abitudini") renderHabits();
+  if (name === "sensazioni") renderSensazioni();
+}
+
+// --- ABITUDINI ---
+var habits = lsGet("habits", []);
+
+function addHabit() {
+  var name = document.getElementById("habit-name").value.trim();
+  if (!name) return;
+  habits.push({id: Date.now().toString(36), name: name, log: {}});
+  lsSet("habits", habits);
+  document.getElementById("habit-name").value = "";
+  renderHabits();
+  showToast("Abitudine aggiunta");
+}
+function deleteHabit(id) {
+  if (!confirm("Eliminare questa abitudine?")) return;
+  habits = habits.filter(function(h) { return h.id !== id; });
+  lsSet("habits", habits);
+  renderHabits();
+  showToast("Eliminata");
+}
+function toggleHabit(id) {
+  var h = habits.find(function(x) { return x.id === id; });
+  if (!h) return;
+  var today = formatDateKey(new Date());
+  if (h.log[today]) { delete h.log[today]; }
+  else { h.log[today] = true; }
+  lsSet("habits", habits);
+  renderHabits();
+}
+function getStreak(habit) {
+  var streak = 0;
+  var d = new Date();
+  while (true) {
+    var key = formatDateKey(d);
+    if (habit.log[key]) { streak++; d.setDate(d.getDate() - 1); }
+    else break;
+  }
+  return streak;
+}
+function renderHabits() {
+  var el = document.getElementById("habits-list");
+  if (habits.length === 0) {
+    el.innerHTML = '<div class="empty-state"><span>\ud83c\udfaf</span><p>Nessuna abitudine</p></div>';
+    return;
+  }
+  var today = formatDateKey(new Date());
+  el.innerHTML = habits.map(function(h) {
+    var streak = getStreak(h);
+    var isDone = h.log[today];
+    var heatmap = "";
+    for (var i = 13; i >= 0; i--) {
+      var d = new Date();
+      d.setDate(d.getDate() - i);
+      var key = formatDateKey(d);
+      heatmap += '<div class="heatmap-cell' + (h.log[key] ? ' done' : '') + '" title="' + formatDate(key) + '"></div>';
+    }
+    return '<div class="card"><div style="display:flex;justify-content:space-between;align-items:center">' +
+      '<div><strong>' + h.name + '</strong>' + (streak > 0 ? ' <span class="streak">' + streak + ' giorni \ud83d\udd25</span>' : '') + '</div>' +
+      '<div style="display:flex;gap:6px"><button class="btn btn-sm ' + (isDone ? 'btn-primary' : 'btn-secondary') + '" data-action="toggleHabit" data-id="' + h.id + '">' + (isDone ? '\u2713' : '\u25cb') + '</button><button class="btn btn-sm btn-danger" data-action="deleteHabit" data-id="' + h.id + '">\ud83d\uddd1</button></div>' +
+    '</div><div class="heatmap">' + heatmap + '</div></div>';
+  }).join("");
+}
+
+// --- SENSAZIONI ---
+var sensazioni = lsGet("sensazioni", []);
+var sensDay = new Date();
+
+function changeSensDay(dir) {
+  sensDay.setDate(sensDay.getDate() + dir);
+  renderSensazioni();
+}
+function saveSensazione() {
+  var dateKey = formatDateKey(sensDay);
+  var obj = {
+    date: dateKey,
+    umore: parseInt(document.getElementById("sens-umore").value),
+    energia: parseInt(document.getElementById("sens-energia").value),
+    sonno: parseInt(document.getElementById("sens-sonno").value),
+    note: document.getElementById("sens-note").value.trim()
+  };
+  var idx = sensazioni.findIndex(function(s) { return s.date === dateKey; });
+  if (idx >= 0) sensazioni[idx] = obj;
+  else sensazioni.push(obj);
+  lsSet("sensazioni", sensazioni);
+  renderSensazioni();
+  showToast("Sensazione salvata");
+}
+function renderSensazioni() {
+  var dateKey = formatDateKey(sensDay);
+  document.getElementById("sens-date").textContent = formatDate(dateKey);
+  var existing = sensazioni.find(function(s) { return s.date === dateKey; });
+  if (existing) {
+    document.getElementById("sens-umore").value = existing.umore;
+    document.getElementById("sens-umore-val").textContent = existing.umore;
+    document.getElementById("sens-energia").value = existing.energia;
+    document.getElementById("sens-energia-val").textContent = existing.energia;
+    document.getElementById("sens-sonno").value = existing.sonno;
+    document.getElementById("sens-sonno-val").textContent = existing.sonno;
+    document.getElementById("sens-note").value = existing.note || "";
+  } else {
+    document.getElementById("sens-umore").value = 5;
+    document.getElementById("sens-umore-val").textContent = "5";
+    document.getElementById("sens-energia").value = 5;
+    document.getElementById("sens-energia-val").textContent = "5";
+    document.getElementById("sens-sonno").value = 5;
+    document.getElementById("sens-sonno-val").textContent = "5";
+    document.getElementById("sens-note").value = "";
+  }
+  // History
+  var sorted = sensazioni.slice().sort(function(a, b) { return b.date.localeCompare(a.date); }).slice(0, 7);
+  var el = document.getElementById("sens-history");
+  if (sorted.length === 0) {
+    el.innerHTML = '<div class="empty-state"><span>\ud83d\ude0a</span><p>Nessuna registrazione</p></div>';
+    return;
+  }
+  el.innerHTML = sorted.map(function(s) {
+    return '<div class="card" style="padding:12px"><div style="display:flex;justify-content:space-between"><span style="font-weight:600;font-size:0.85rem">' + formatDate(s.date) + '</span><span style="font-size:0.8rem">\ud83d\ude0a' + s.umore + ' \u26a1' + s.energia + ' \ud83d\ude34' + s.sonno + '</span></div>' +
+    (s.note ? '<p style="font-size:0.8rem;color:var(--muted);margin-top:4px">' + s.note + '</p>' : '') + '</div>';
+  }).join("");
+}
+
+// ==========================================
+// TAB 4: GRAFICI
+// ==========================================
+var chartPeriod = 7;
+var chartJsLoaded = false;
+var chartInstances = {};
+
+function setChartPeriod(days, btn) {
+  chartPeriod = days;
+  document.querySelectorAll("#tab-grafici .filter-btn").forEach(function(b) { b.classList.remove("active"); });
+  if (btn) btn.classList.add("active");
+  renderCharts();
+}
+function loadChartJS(callback) {
+  if (typeof Chart !== "undefined") { callback(); return; }
+  if (chartJsLoaded) {
+    setTimeout(function() {
+      if (typeof Chart !== "undefined") callback();
+      else {
+        document.getElementById("charts-area").style.display = "none";
+        document.getElementById("charts-fallback").style.display = "block";
+      }
+    }, 1000);
+    return;
+  }
+  chartJsLoaded = true;
+  var script = document.createElement("script");
+  script.src = "https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js";
+  script.onload = function() { callback(); };
+  script.onerror = function() {
+    document.getElementById("charts-area").style.display = "none";
+    document.getElementById("charts-fallback").style.display = "block";
+  };
+  document.head.appendChild(script);
+}
+function renderCharts() {
+  if (typeof Chart === "undefined") { loadChartJS(renderCharts); return; }
+  try {
+  document.getElementById("charts-area").style.display = "block";
+  document.getElementById("charts-fallback").style.display = "none";
+
+  var labels = [];
+  var dataKcal = [], dataProt = [], dataCarb = [], dataGrass = [];
+  for (var i = chartPeriod - 1; i >= 0; i--) {
+    var d = new Date();
+    d.setDate(d.getDate() - i);
+    var key = formatDateKey(d);
+    labels.push(String(d.getDate()) + "/" + String(d.getMonth()+1));
+    var t = getDayTotals(key);
+    dataKcal.push(Math.round(t.kcal));
+    dataProt.push(Math.round(t.prot));
+    dataCarb.push(Math.round(t.carb));
+    dataGrass.push(Math.round(t.grass));
+  }
+
+  function movingAvg(arr) {
+    var result = [];
+    for (var i = 0; i < arr.length; i++) {
+      var start = Math.max(0, i - 2);
+      var slice = arr.slice(start, i + 1);
+      var avg = slice.reduce(function(a, b) { return a + b; }, 0) / slice.length;
+      result.push(Math.round(avg));
+    }
+    return result;
+  }
+
+  function makeChart(canvasId, label, data, color) {
+    try {
+      if (chartInstances[canvasId]) chartInstances[canvasId].destroy();
+    } catch(e) {}
+    var el = document.getElementById(canvasId);
+    if (!el) return;
+    var ctx;
+    try { ctx = el.getContext("2d"); } catch(e) { return; }
+    try {
+      chartInstances[canvasId] = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: labels,
+          datasets: [
+            { label: label, data: data, backgroundColor: color + "66", borderColor: color, borderWidth: 1, borderRadius: 4, order: 2 },
+            { label: "Media mobile", data: movingAvg(data), type: "line", borderColor: "#ff6b8a", borderWidth: 2, pointRadius: 0, tension: 0.4, order: 1 }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: true, position: "bottom", labels: { boxWidth: 12, font: { size: 10 } } } },
+          scales: { y: { beginAtZero: true, grid: { color: "#d9e8dd44" } }, x: { grid: { display: false }, ticks: { font: { size: 9 } } } }
+        }
+      });
+    } catch(e) {}
+  }
+
+  makeChart("chart-kcal", "Kcal", dataKcal, "#c9f31d");
+  makeChart("chart-prot", "Proteine (g)", dataProt, "#4f9cd6");
+  makeChart("chart-carb", "Carboidrati (g)", dataCarb, "#ff8a3d");
+  makeChart("chart-grass", "Grassi (g)", dataGrass, "#ff6b8a");
+  } catch(chartErr) { try{document.getElementById('charts-area').style.display='none';document.getElementById('charts-fallback').style.display='block';}catch(e2){} }
+}
+
+// ==========================================
+// EVENT DELEGATION
+// ==========================================
+document.addEventListener("click", function(e) {
+  var target = e.target.closest("[data-action]");
+  if (!target) return;
+  var action = target.getAttribute("data-action");
+  switch (action) {
+    // Header
+    case "toggleTheme": toggleTheme(); break;
+    case "openSettings": openSettings(); break;
+    // Bottom nav
+    case "switchTab": switchTab(target.getAttribute("data-tab"), target); break;
+    // Promemoria
+    case "salvaPromemoria": salvaPromemoria(); break;
+    case "cancelEditPromemoria": cancelEditPromemoria(); break;
+    case "addCategory": addCategory(); break;
+    case "deleteCategory": deleteCategory(parseInt(target.getAttribute("data-index"))); break;
+    case "setPromFilter": setPromFilter(target.getAttribute("data-filter")); break;
+    case "editPromemoria": editPromemoria(target.getAttribute("data-id")); break;
+    case "togglePromemoria": togglePromemoria(target.getAttribute("data-id")); break;
+    case "deletePromemoria": deletePromemoria(target.getAttribute("data-id")); break;
+    // Nutrizione tabs
+    case "switchNutriTab": switchNutriTab(target.getAttribute("data-tab")); break;
+    // Pasti
+    case "changeDay": changeDay(parseInt(target.getAttribute("data-dir"))); break;
+    case "addFoodToMeal": addFoodToMeal(); break;
+    case "removeMealFood": removeMealFood(parseInt(target.getAttribute("data-index"))); break;
+    case "saveMeal": saveMeal(); break;
+    case "deleteMeal": deleteMeal(target.getAttribute("data-id")); break;
+    case "deleteMealFood": deleteMealFood(target.getAttribute("data-meal-id"), parseInt(target.getAttribute("data-food-index"))); break;
+    // Alimenti
+    case "salvaAlimento": salvaAlimento(); break;
+    case "cancelEditAlimento": cancelEditAlimento(); break;
+    case "editAlimento": editAlimento(target.getAttribute("data-id")); break;
+    case "deleteAlimento": deleteAlimento(target.getAttribute("data-id")); break;
+    // Spesa
+    case "addSpesaItem": addSpesaItem(); break;
+    case "clearCheckedSpesa": clearCheckedSpesa(); break;
+    case "clearAllSpesa": clearAllSpesa(); break;
+    case "addSpesaCategory": addSpesaCategory(); break;
+    case "deleteSpesaCat": deleteSpesaCat(parseInt(target.getAttribute("data-index"))); break;
+    // Benessere tabs
+    case "switchBenessereTab": switchBenessereTab(target.getAttribute("data-tab")); break;
+    // Abitudini
+    case "addHabit": addHabit(); break;
+    case "toggleHabit": toggleHabit(target.getAttribute("data-id")); break;
+    case "deleteHabit": deleteHabit(target.getAttribute("data-id")); break;
+    // Sensazioni
+    case "changeSensDay": changeSensDay(parseInt(target.getAttribute("data-dir"))); break;
+    case "saveSensazione": saveSensazione(); break;
+    // Grafici
+    case "setChartPeriod": setChartPeriod(parseInt(target.getAttribute("data-days")), target); break;
+    // Settings
+    case "saveSettings": saveSettings(); break;
+    case "exportData": exportData(); break;
+    case "triggerImport": document.getElementById("import-file").click(); break;
+    case "closeSettings": closeSettings(); break;
+  }
+});
+
+// Change event delegation (for checkboxes in spesa)
+document.addEventListener("change", function(e) {
+  var target = e.target.closest("[data-action]");
+  if (!target) return;
+  var action = target.getAttribute("data-action");
+  switch (action) {
+    case "toggleSpesaItem": toggleSpesaItem(target.getAttribute("data-id")); break;
+  }
+});
+
+// Input event listeners for sliders and search
+document.addEventListener("input", function(e) {
+  var id = e.target.id;
+  switch (id) {
+    case "sens-umore": document.getElementById("sens-umore-val").textContent = e.target.value; break;
+    case "sens-energia": document.getElementById("sens-energia-val").textContent = e.target.value; break;
+    case "sens-sonno": document.getElementById("sens-sonno-val").textContent = e.target.value; break;
+    case "alim-search": renderAlimenti(); break;
+  }
+});
+
+// Import file change listener
+document.getElementById("import-file").addEventListener("change", function(e) {
+  importData(e);
+});
+
+// ==========================================
+// INIT
+// ==========================================
+(function init() {
+  renderCatSelect();
+  renderCatList();
+  renderPromFilters();
+  renderPromList();
+  updateAlimSelect();
+  renderPasti();
+  renderAlimenti();
+  renderSpesaCatSelect();
+  renderSpesaCatList();
+  renderSpesa();
+  renderHabits();
+  renderSensazioni();
+})();
+
+// Service Worker
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("./sw.js").catch(function(){});
+}
+</script>
+</body>
+</html>
