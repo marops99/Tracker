@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#1a237e">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<link rel="apple-touch-icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9IjkwIiBmaWxsPSIjMWEyMzdlIi8+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNTYsNTYpIHNjYWxlKDQpIj48cGF0aCBkPSJNNTAgOCBDMzAgOCAyMiAyMiAyMiAzOCBDMjIgNDggMjYgNTUgMzAgNjAgQzE4IDY2IDEwIDc4IDEwIDkyIEw5MCA5MiBDOTAgNzggODIgNjYgNzAgNjAgQzc0IDU1IDc4IDQ4IDc4IDM4IEM3OCAyMiA3MCA4IDUwIDggWiBNMzggMzQgQzM4IDMwIDQxIDI4IDQ0IDI4IEM0NyAyOCA0OCAzMSA0NiAzMyBDNDQgMzUgNDAgMzUgMzggMzQgWiBNNjIgMzQgQzYwIDM1IDU2IDM1IDU0IDMzIEM1MiAzMSA1MyAyOCA1NiAyOCBDNTkgMjggNjIgMzAgNjIgMzQgWiBNNTAgNDIgQzU0IDQyIDU3IDQ1IDU1IDQ5IEM1MyA1MyA0NyA1MyA0NSA0OSBDNDMgNDUgNDYgNDIgNTAgNDIgWiIgZmlsbD0iI2ZmZiIvPjwvZz48L3N2Zz4=">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA1MTIgNTEyIj48cmVjdCB3aWR0aD0iNTEyIiBoZWlnaHQ9IjUxMiIgcng9IjkwIiBmaWxsPSIjMWEyMzdlIi8+PGcgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoNTYsNTYpIHNjYWxlKDQpIj48cGF0aCBkPSJNNTAgOCBDMzAgOCAyMiAyMiAyMiAzOCBDMjIgNDggMjYgNTUgMzAgNjAgQzE4IDY2IDEwIDc4IDEwIDkyIEw5MCA5MiBDOTAgNzggODIgNjYgNzAgNjAgQzc0IDU1IDc4IDQ4IDc4IDM4IEM3OCAyMiA3MCA4IDUwIDggWiBNMzggMzQgQzM4IDMwIDQxIDI4IDQ0IDI4IEM0NyAyOCA0OCAzMSA0NiAzMyBDNDQgMzUgNDAgMzUgMzggMzQgWiBNNjIgMzQgQzYwIDM1IDU2IDM1IDU0IDMzIEM1MiAzMSA1MyAyOCA1NiAyOCBDNTkgMjggNjIgMzAgNjIgMzQgWiBNNTAgNDIgQzU0IDQyIDU3IDQ1IDU1IDQ5IEM1MyA1MyA0NyA1MyA0NSA0OSBDNDMgNDUgNDYgNDIgNTAgNDIgWiIgZmlsbD0iI2ZmZiIvPjwvZz48L3N2Zz4=">
+<title>Persona</title>
+<link rel="manifest" href="./manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Archivo:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--pitch:#1a237e;--lime:#ffffff;--chalk:#f5f7fa;--ink:#1a1a2e;--line:#e0e4ed;--amber:#ff8a3d;--pink:#ff6b8a;--blue:#3f51b5;--muted:#6b7394;--card-bg:#fff;--input-bg:#f8f9fc;--red:#e53e3e;--green:#38a169;--font-title:"Space Grotesk",system-ui,sans-serif;--font-body:"Archivo",system-ui,sans-serif;--radius:14px;--radius-sm:10px;--shadow:0 2px 8px rgba(0,0,0,.06)}
+[data-theme="dark"]{--pitch:#7c8dff;--lime:#1a1a2e;--chalk:#0f1118;--ink:#e8eaf6;--line:#2a2d3e;--muted:#8890b0;--card-bg:#1a1d2e;--input-bg:#222538;--shadow:0 2px 8px rgba(0,0,0,.4)}
+html{font-size:18px}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:var(--font-body);background:var(--chalk);color:var(--ink);min-height:100vh;padding-bottom:80px;transition:background .3s,color .3s}
+h1,h2,h3,h4{font-family:var(--font-title)}
+.container{max-width:640px;margin:0 auto;padding:0 16px}
+.header{background:var(--pitch);color:var(--lime);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header h1{font-size:1.2rem;letter-spacing:-.5px}
+.header-actions{display:flex;gap:6px}
+.header-btn{background:none;border:none;color:var(--lime);font-size:1.3rem;cursor:pointer;padding:4px 8px;border-radius:8px}
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:var(--card-bg);border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:6px 0 4px;padding-bottom:env(safe-area-inset-bottom,8px);z-index:100}
+.nav-item{display:flex;flex-direction:column;align-items:center;gap:1px;background:none;border:none;color:var(--muted);font-size:.72rem;font-family:var(--font-body);cursor:pointer;padding:4px 8px;border-radius:8px;transition:all .2s}
+.nav-item span{font-size:1.3rem}
+.nav-item.active{color:var(--pitch);font-weight:600}
+.tab-content{display:none;padding:14px 0}.tab-content.active{display:block}
+.card{background:var(--card-bg);border:1px solid var(--line);border-radius:var(--radius);padding:14px;margin-bottom:12px;box-shadow:var(--shadow)}
+input[type="text"],input[type="number"],input[type="date"],input[type="time"],select,textarea{width:100%;max-width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--input-bg);color:var(--ink);font-family:var(--font-body);font-size:.88rem;transition:border-color .2s;box-sizing:border-box}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--pitch)}
+textarea{resize:vertical;min-height:60px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;overflow:hidden}
+.form-grid>div{min-width:0;overflow:hidden}
+label{display:block;font-size:.78rem;font-weight:600;color:var(--muted);margin-bottom:3px;margin-top:8px}
+.form-row{margin-bottom:6px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:4px;padding:9px 14px;border:none;border-radius:var(--radius-sm);font-family:var(--font-body);font-size:.82rem;font-weight:600;cursor:pointer;transition:opacity .2s}
+.btn-primary{background:var(--pitch);color:var(--lime)}.btn-danger{background:var(--red);color:#fff}.btn-secondary{background:var(--line);color:var(--ink)}
+.btn-sm{padding:6px 10px;font-size:.72rem}.btn-full{width:100%}.btn:active{opacity:.7}
+.filter-bar{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
+.filter-btn{padding:5px 9px;border:1px solid var(--line);border-radius:8px;background:transparent;color:var(--muted);font-size:.68rem;font-weight:500;cursor:pointer}
+.filter-btn.active{background:var(--pitch);color:var(--lime);border-color:var(--pitch)}
+.pill-tabs{display:flex;gap:3px;background:var(--line);border-radius:var(--radius-sm);padding:3px;margin-bottom:12px;overflow-x:auto}
+.pill-tab{flex:1;padding:7px 8px;border:none;background:transparent;color:var(--muted);font-size:.72rem;font-weight:600;border-radius:8px;cursor:pointer;white-space:nowrap;font-family:var(--font-body)}
+.pill-tab.active{background:var(--card-bg);color:var(--ink);box-shadow:var(--shadow)}
+.empty-state{text-align:center;padding:24px;color:var(--muted);font-size:.85rem}.empty-state span{font-size:2rem;display:block;margin-bottom:6px}
+.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%) translateY(100px);background:var(--ink);color:var(--chalk);padding:10px 16px;border-radius:12px;font-size:.82rem;font-weight:500;z-index:1000;opacity:0;transition:all .3s ease;pointer-events:none;display:flex;align-items:center;gap:10px;max-width:90vw}.toast.show{transform:translateX(-50%) translateY(0);opacity:1;pointer-events:auto}.toast-undo{background:none;border:none;color:var(--lime,#c9f31d);font-weight:700;cursor:pointer;font-size:.82rem;padding:2px 4px;flex-shrink:0}
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end;justify-content:center}.modal-overlay.show{display:flex}
+.modal-content{background:var(--card-bg);color:var(--ink);width:100%;max-width:640px;max-height:85vh;overflow-y:auto;border-radius:20px 20px 0 0;padding:20px}
+.day-nav{display:flex;align-items:center;justify-content:center;gap:14px;margin-bottom:12px}
+.day-nav button{background:var(--line);border:none;width:32px;height:32px;border-radius:50%;font-size:1rem;cursor:pointer;color:var(--ink)}
+.day-nav span{font-family:var(--font-title);font-weight:600;font-size:.88rem}
+.stat-bar{display:flex;align-items:center;gap:8px;margin:6px 0}.stat-bar-label{font-size:.8rem;color:var(--muted);min-width:55px}.stat-bar-track{flex:1;height:7px;background:var(--line);border-radius:3px;overflow:hidden}.stat-bar-fill{height:100%;border-radius:3px}
+.tag-container{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}.tag-chip{display:inline-flex;align-items:center;gap:3px;background:var(--line);color:var(--ink);padding:3px 8px;border-radius:12px;font-size:.7rem;font-weight:500}.tag-chip-x{cursor:pointer;font-weight:700;opacity:.6}
+.heatmap{display:grid;grid-template-columns:repeat(14,1fr);gap:2px;margin:6px 0}.heatmap-cell{aspect-ratio:1;border-radius:3px;background:var(--line)}.heatmap-cell.done{background:var(--green)}
+.streak{font-size:.75rem;color:var(--amber);font-weight:600}
+.today-btn{background:var(--pitch);color:var(--lime);border:none;padding:3px 8px;border-radius:6px;font-size:.72rem;font-weight:600;cursor:pointer}
+.recent-foods{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}.recent-food-chip{padding:4px 8px;background:var(--line);border-radius:8px;font-size:.7rem;cursor:pointer;border:none;color:var(--ink)}.recent-food-chip:hover{background:var(--pitch);color:var(--lime)}
+.chart-container{position:relative;margin-bottom:14px}.chart-container canvas{width:100%!important;height:200px!important;touch-action:pan-y}
+.wrapped-card{background:linear-gradient(135deg,var(--pitch),#3949ab);color:var(--lime);border-radius:var(--radius);padding:16px;margin:12px 0}.wrapped-card h4{margin-bottom:8px}.wrapped-item{font-size:.8rem;margin:4px 0;opacity:.9}
+.fin-balance{text-align:center;padding:14px;font-family:var(--font-title)}.fin-balance .amount{font-size:1.8rem;font-weight:700}.fin-balance .label{font-size:.75rem;color:var(--muted)}
+.transaction-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}.transaction-item:last-child{border-bottom:none}
+.trx-body{flex:1}.trx-name{font-weight:600;font-size:.82rem}.trx-sub{font-size:.7rem;color:var(--muted)}
+.trx-amount{font-family:var(--font-title);font-weight:700;font-size:.9rem}.trx-amount.expense{color:var(--red)}.trx-amount.income{color:var(--green)}.trx-amount.transfer{color:var(--blue)}
+.section-select{padding:6px 10px;border:1px solid var(--line);border-radius:var(--radius-sm);background:var(--input-bg);color:var(--ink);font-family:var(--font-title);font-weight:600;font-size:.85rem}
+.badge{display:inline-block;padding:2px 7px;border-radius:6px;font-size:.72rem;font-weight:600}
+.badge-red{background:#fde8e8;color:#dc2626}.badge-amber{background:#fff3e0;color:#e65100}.badge-green{background:#e8f5e9;color:#2e7d32}.badge-gray{background:#f0f0f0;color:#666}
+[data-theme="dark"] .badge-red{background:#3b1515;color:#f87171}[data-theme="dark"] .badge-amber{background:#3b2a15;color:#fb923c}[data-theme="dark"] .badge-green{background:#153b1a;color:#4ade80}[data-theme="dark"] .badge-gray{background:#2a2a2a;color:#aaa}
+.insight-card{background:var(--input-bg);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:6px;font-size:.8rem;line-height:1.4}
+.home-stat{padding:6px;border-radius:8px;transition:background .15s}.home-stat:active{background:var(--input-bg)}
+[data-action]{-webkit-tap-highlight-color:transparent}
+.fab{position:fixed;bottom:90px;right:16px;width:48px;height:48px;border-radius:50%;background:var(--pitch);color:var(--lime);border:none;font-size:1.4rem;box-shadow:0 4px 12px rgba(0,0,0,.2);cursor:pointer;z-index:90;display:flex;align-items:center;justify-content:center;transition:transform .2s}.fab:active{transform:scale(.9)}
+.fab-menu{display:none;position:fixed;bottom:145px;right:16px;z-index:91;flex-direction:column;gap:8px}.fab-menu.show{display:flex}
+.fab-item{display:flex;align-items:center;gap:8px;background:var(--card-bg);border:1px solid var(--line);border-radius:12px;padding:8px 14px;font-size:.78rem;font-weight:500;cursor:pointer;box-shadow:var(--shadow)}.fab-item span{font-size:1rem}
+.section-select{-webkit-appearance:none;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b7394' d='M2 4l4 4 4-4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 10px center;padding-right:28px}
+</style>
+</head>
+<body>
+<header class="header"><button class="header-btn" data-action="openSearch" aria-label="Cerca">&#128269;</button><div data-action="goHome" style="cursor:pointer;display:flex;align-items:center;gap:7px" role="button" aria-label="Torna alla Home" tabindex="0"><svg width="22" height="22" viewBox="0 0 100 100" style="flex-shrink:0" aria-hidden="true"><path d="M50 8 C30 8 22 22 22 38 C22 48 26 55 30 60 C18 66 10 78 10 92 L90 92 C90 78 82 66 70 60 C74 55 78 48 78 38 C78 22 70 8 50 8 Z M38 34 C38 30 41 28 44 28 C47 28 48 31 46 33 C44 35 40 35 38 34 Z M62 34 C60 35 56 35 54 33 C52 31 53 28 56 28 C59 28 62 30 62 34 Z M50 42 C54 42 57 45 55 49 C53 53 47 53 45 49 C43 45 46 42 50 42 Z" fill="currentColor"/></svg><span style="font-size:1.15rem;font-weight:700;letter-spacing:-.5px">Persona</span></div><button class="header-btn" data-action="toggleTheme" aria-label="Cambia tema chiaro/scuro">&#127763;</button></header>
+<main class="container">
+<!-- HOME --><div id="tab-home" class="tab-content active"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><select id="home-sel" class="section-select"><option value="dashboard">Dashboard</option><option value="stats">Statistiche</option></select></div><div id="home-content"></div></div>
+<!-- CIBO --><div id="tab-cibo" class="tab-content"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><select id="cibo-sel" class="section-select"><option value="recap">Recap</option><option value="pasti">Pasti</option><option value="alimenti">Alimenti</option><option value="templates">Template</option><option value="spesa">Lista Spesa</option><option value="storico">Storico</option><option value="stats">Statistiche</option><option value="impostazioni">Impostazioni</option></select><button class="btn btn-primary btn-sm" data-action="openQuickMeal">+ Pasto</button></div><div id="cibo-view"></div></div>
+<!-- SALUTE --><div id="tab-salute" class="tab-content"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><select id="salute-sel" class="section-select"><option value="recap">Recap</option><option value="abitudini">Abitudini</option><option value="sensazioni">Sensazioni</option><option value="allenamenti">Allenamenti</option><option value="stats">Statistiche</option></select></div><div id="salute-view"></div></div>
+<!-- DIARIO --><div id="tab-diario" class="tab-content"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><select id="diario-sel" class="section-select"><option value="promemoria">Promemoria</option><option value="note">Note</option><option value="diario">Diario</option><option value="sogni">Sogni</option></select></div><div id="diario-view"></div></div>
+<!-- SOLDI --><div id="tab-soldi" class="tab-content"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px"><select id="soldi-sel" class="section-select"><option value="recap">Recap</option><option value="conti">Conti</option><option value="categorie">Categorie</option><option value="regolari">Regolari</option><option value="stats">Grafici</option></select><button class="btn btn-primary btn-sm" data-action="openFinAdd">+ Aggiungi</button></div><div id="soldi-view"></div></div>
+
+</main>
+<nav class="bottom-nav">
+<button class="nav-item active" data-action="switchTab" data-tab="home"><span>&#127968;</span>Home</button>
+<button class="nav-item" data-action="switchTab" data-tab="cibo"><span>&#127869;</span>Cibo</button>
+<button class="nav-item" data-action="switchTab" data-tab="salute"><span>&#129496;</span>Salute</button>
+<button class="nav-item" data-action="switchTab" data-tab="diario"><span>&#128221;</span>Mente</button>
+<button class="nav-item" data-action="switchTab" data-tab="soldi"><span>&#128176;</span>Soldi</button>
+</nav>
+<button class="fab" data-action="toggleFab" aria-label="Apri menu azioni rapide">+</button>
+<div class="fab-menu" id="fab-menu">
+<div class="fab-item" data-action="openQuickMeal"><span>&#127869;</span>Pasto</div>
+<div class="fab-item" data-action="fabProm"><span>&#9200;</span>Promemoria</div>
+<div class="fab-item" data-action="fabNote"><span>&#128221;</span>Nota</div>
+<div class="fab-item" data-action="openFinAdd"><span>&#128176;</span>Transazione</div>
+</div>
+<div class="toast" id="toast"></div>
+<div id="chart-tooltip" style="display:none;position:fixed;background:var(--ink);color:var(--chalk);padding:6px 10px;border-radius:8px;font-size:.72rem;line-height:1.5;z-index:1500;pointer-events:none;box-shadow:var(--shadow);white-space:nowrap"></div>
+<!-- MODALS -->
+
+<div class="modal-overlay" id="quick-meal-modal" role="dialog" aria-modal="true" aria-label="Pasto veloce"><div class="modal-content"><h3>Pasto Veloce</h3><div class="form-row"><select id="qm-tipo" style="margin-bottom:8px"><option>Colazione</option><option>Spuntino</option><option>Pranzo</option><option>Merenda</option><option>Cena</option></select></div><div id="qm-recent"></div><div id="qm-templates"></div><div id="qm-foods-list"></div><div class="form-grid" style="margin-top:8px"><div><select id="qm-alim"></select></div><div style="display:flex;gap:4px"><input type="number" id="qm-qty" value="100" style="width:60px"><button class="btn btn-secondary btn-sm" data-action="qmAdd">+</button></div></div><button class="btn btn-primary btn-full" style="margin-top:10px" data-action="qmSave">Salva</button><button class="btn btn-secondary btn-full" style="margin-top:6px" data-action="closeQuickMeal">Annulla</button></div></div>
+<div class="modal-overlay" id="note-detail-modal" role="dialog" aria-modal="true"><div class="modal-content" id="note-detail-content"></div></div>
+<div class="modal-overlay" id="search-modal" role="dialog" aria-modal="true" aria-label="Ricerca"><div class="modal-content"><div style="display:flex;gap:6px;align-items:center;margin-bottom:10px"><input type="text" id="search-input" placeholder="Cerca ovunque..." style="flex:1"><button class="btn btn-secondary btn-sm" data-action="closeSearch" aria-label="Chiudi ricerca">X</button></div><div id="search-results"></div></div></div>
+<div class="modal-overlay" id="fin-add-modal" role="dialog" aria-modal="true" aria-label="Nuova transazione"><div class="modal-content"><h3>Nuova Transazione</h3><div class="pill-tabs" style="margin-top:10px"><button class="pill-tab active" data-action="setFinType" data-t="spesa">Spesa</button><button class="pill-tab" data-action="setFinType" data-t="entrata">Entrata</button></div><div class="form-grid"><div><label>Importo</label><input type="number" id="fin-add-amt" step="0.01"></div><div><label>Data</label><input type="date" id="fin-add-date"></div></div><div class="form-grid"><div><label>Conto</label><select id="fin-add-acc"></select></div><div><label>Categoria</label><select id="fin-add-cat"></select></div></div><div class="form-row"><label>Note</label><input type="text" id="fin-add-note"></div><button class="btn btn-primary btn-full" style="margin-top:10px" data-action="saveFinTrx">Salva</button><button class="btn btn-secondary btn-full" style="margin-top:6px" data-action="closeFinAdd">Annulla</button></div></div>
+<div class="modal-overlay" id="dialog-modal" role="dialog" aria-modal="true"><div class="modal-content" id="dialog-content"></div></div>
+<script src="./js/core.js"></script>
+<script src="./js/state.js"></script>
+<script src="./js/home.js"></script>
+<script src="./js/cibo.js"></script>
+<script src="./js/salute.js"></script>
+<script src="./js/diario.js"></script>
+<script src="./js/soldi.js"></script>
+<script src="./js/stats.js"></script>
+<script src="./js/search.js"></script>
+<script src="./js/app.js"></script>
+</body>
+</html>
